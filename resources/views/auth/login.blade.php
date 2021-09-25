@@ -66,7 +66,7 @@
                         }
                     })
                     .catch(function(error) {
-                        console.log(error.message);
+                        tools.ModalAlertWarning('Login', error.message);
                     });
             }
         });

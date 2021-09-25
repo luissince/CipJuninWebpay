@@ -14,20 +14,20 @@
         <form id="register" method="POST">
             @csrf
             <div class="form-group has-feedback">
-                <input type="email" class="form-control" placeholder="Usuario" name="name">
+                <input type="text" class="form-control" placeholder="Dni" name="dni">
                 <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
             </div>
             <div class="form-group has-feedback">
-                <input type="email" class="form-control" placeholder="Emai" name="email">
+                <input type="text" class="form-control" placeholder="N° Cip" name="cip">
                 <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
             </div>
             <div class="form-group has-feedback">
-                <input type="password" class="form-control" placeholder="Contraseña" name="password">
+                <input type="email" class="form-control" placeholder="Contraseña" name="email">
                 <span class="glyphicon glyphicon-lock form-control-feedback"></span>
             </div>
             <div class="row">
                 <div class="col-md-12">
-                    <button type="submit" class="btn btn-info btn-block btn-flat">Guardar</button>
+                    <button type="submit" class="btn btn-info btn-block btn-flat">Enviar</button>
                 </div>
                 <!-- /.col -->
             </div>
@@ -61,7 +61,7 @@
                 });
         });
 
-        loadData();
+        // loadData();
     });
 
     async function loadData() {

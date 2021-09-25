@@ -3,7 +3,18 @@
 @section('title','Home')
 
 @section('content')
-<!-- Navbar goes here -->
+<div class="error-page">
+    <h2 class="headline text-yellow"> 404</h2>
 
-<h1 class="text-5xl text-red-500 text-center pt-24">Página no encontrada</h1>
+    <div class="error-content">
+        <h3><i class="fa fa-warning text-yellow"></i> ¡UPS! Página no encontrada.</h3>
+
+        <p>
+            No pudimos encontrar la página que buscaba.
+            Mientras tanto, puedes <a href="{{route('index')}}">retornar al inicio</a>.
+        </p>
+
+    </div>
+    <!-- /.error-content -->
+</div>
 @endsection

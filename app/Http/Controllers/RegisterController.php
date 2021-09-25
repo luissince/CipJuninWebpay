@@ -21,7 +21,7 @@ class RegisterController extends Controller
 
     public function data()
     {
-        $persona = DB::select('SELECT * FROM users');
+        $persona = DB::select('SELECT * FROM persona');
         return json_encode($persona);
         // return view('auth.register', ['data' => $persona]);
     }

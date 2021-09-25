@@ -5,5 +5,17 @@
 @section('content')
 <!-- Navbar goes here -->
 
-<h1 class="text-5xl text-red-500 text-center pt-24">Error 500 de servidor</h1>
+<div class="error-page">
+    <h2 class="headline text-yellow"> 500</h2>
+
+    <div class="error-content">
+        <h3><i class="fa fa-warning text-yellow"></i> ¡UPS! Algo salió mal.</h3>
+
+        <p>
+            Trabajaremos para solucionarlo de inmediato. Mientras tanto, puede <a href="{{route('index')}}">retornar al inicio</a>.
+        </p>
+
+    </div>
+    <!-- /.error-content -->
+</div>
 @endsection

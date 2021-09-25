@@ -11,7 +11,7 @@ Route::get('/', function (Request $request) {
     if ($request->session()->has('LoginSession')) {
         return view('admin.admin');
     } else {
-        return view('auth.login');
+        return view('welcome');
     }
 })->name('index');
 

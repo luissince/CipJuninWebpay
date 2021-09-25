@@ -3,6 +3,7 @@
 @section('title', 'Home')
 
 @section('content')
+
 <div class="login-box">
     <div class="login-logo">
         <a href="../../index2.html"><b>Colegio de Ingenieros del Perú - JUNÍN</b></a>
@@ -34,10 +35,11 @@
 <script>
     let tools = new Tools();
     document.addEventListener('DOMContentLoaded', function() {
+        let form = document.getElementById('frmLogin');
+        form.elements['user'].focus();
+
         document.getElementById('frmLogin').addEventListener('submit', function(event) {
             event.preventDefault();
-
-            let form = document.getElementById('frmLogin');
             if (form.elements['user'].value.trim().length == 0) {
                 tools.AlertWarning('', 'Ingrese su usuario por favor.');
                 form.elements['user'].focus();

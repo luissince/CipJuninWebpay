@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title','Home')
+@section('title', 'Home')
 
 @section('content')
 <div class="login-box">
@@ -16,7 +16,7 @@
             <div class="form-group has-feedback">
                 <input type="text" class="form-control" placeholder="Usuario" name="user">
                 <span class="glyphicon glyphicon-user form-control-feedback"></span>
-            </div>          
+            </div>
             <div class="form-group has-feedback">
                 <input type="password" class="form-control" placeholder="Contraseña" name="password">
                 <span class="glyphicon glyphicon-lock form-control-feedback"></span>
@@ -30,35 +30,46 @@
     </div>
     <!-- /.login-box-body -->
 </div>
+<script src="{{ asset('js/tools.js') }}"></script>
 <script>
-    document.addEventListener('DOMContentLoaded', function(){
-        document.getElementById('frmLogin').addEventListener('submit',function(event){
+    let tools = new Tools();
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('frmLogin').addEventListener('submit', function(event) {
             event.preventDefault();
-            console.log(event)
-            const data = new FormData(document.getElementById('frmLogin'));
-            fetch("{{ route('login.valid')}}", {
-                    method: 'POST',
-                    body: data
-                })
-                .then(function(response) {
-                    if (response.ok) {
-                        return response.json()
-                    } else {
-                        throw "Error de conexión, intente nuevamente.";
-                    }
-                })
-                .then(function(result) {
-                    if(result.estatus === 1){
-                        window.location.href = "{{ route('admin.index')}}";
-                    }else{
-                        console.log(result.message); 
-                    }
-                })
-                .catch(function(error) {
-                    console.log(error.message);
-                });
+
+            let form = document.getElementById('frmLogin');
+            if (form.elements['user'].value.trim().length == 0) {
+                tools.AlertWarning('', 'Ingrese su usuario por favor.');
+                form.elements['user'].focus();
+            } else if (form.elements['password'].value.trim().length == 0) {
+                tools.AlertWarning('', 'Ingrese su contraseña por favor.');
+                form.elements['password'].focus();
+            } else {
+                tools.ModalAlertInfo('Login', 'Procesando petición...');
+                const data = new FormData(form);
+                fetch("{{ route('login.valid') }}", {
+                        method: 'POST',
+                        body: data
+                    })
+                    .then(function(response) {
+                        if (response.ok) {
+                            return response.json()
+                        } else {
+                            throw "Error de conexión, intente nuevamente.";
+                        }
+                    })
+                    .then(function(result) {
+                        if (result.estatus === 1) {
+                            window.location.href = "{{ route('admin.index') }}";
+                        } else {
+                            tools.ModalAlertWarning('Login', result.message);
+                        }
+                    })
+                    .catch(function(error) {
+                        console.log(error.message);
+                    });
+            }
         });
     });
-
 </script>
 @endsection

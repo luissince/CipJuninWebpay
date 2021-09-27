@@ -19,8 +19,9 @@ class SessionController extends Controller
 
     public function valid(Request $request)
     {
-        $persona = DB::selectOne(
-            'SELECT  
+        try {
+            $persona = DB::selectOne(
+                'SELECT  
             p.idDNI,
             p.NumDoc,
             p.Nombres,
@@ -29,25 +30,31 @@ class SessionController extends Controller
             p.Clave
             FROM Persona AS p
             WHERE p.CIP = ?',
-            [$request->cip]
-        );
-        if ($persona !== null) {
-            if (Hash::check($request->password, $persona->Clave)) {
-                $request->session()->put('LoginSession', $persona);
-                return response()->json([
-                    'estatus' => 1,
-                    'message' => 'Datos correctos',
-                ]);
+                [$request->cip]
+            );
+            if ($persona !== null) {
+                if (Hash::check($request->password, $persona->Clave)) {
+                    $request->session()->put('LoginSession', $persona);
+                    return response()->json([
+                        'estatus' => 1,
+                        'message' => 'Datos correctos',
+                    ]);
+                } else {
+                    return response()->json([
+                        'estatus' => '0',
+                        'message' => 'Usuario o contraseña incorrectas.',
+                    ]);
+                }
             } else {
                 return response()->json([
                     'estatus' => '0',
                     'message' => 'Usuario o contraseña incorrectas.',
                 ]);
             }
-        } else {
+        } catch (\PDOException $e) {
             return response()->json([
-                'estatus' => '0',
-                'message' => 'Usuario o contraseña incorrectas.',
+                'estatus' => 0,
+                'message' => "Error de conexión, intente nuevamente en un parte de minutos.",
             ]);
         }
     }

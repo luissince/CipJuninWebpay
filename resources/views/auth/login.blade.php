@@ -97,6 +97,7 @@
                         }
                     })
                     .catch(function(error) {
+                        console.error(error)
                         tools.ModalAlertError('Login', error.message);
                         isProccess = false;
                     });

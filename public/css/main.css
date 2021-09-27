@@ -10,8 +10,12 @@
     padding: 10px !important;
 }
 
+.text-white {
+    color: #ffffff !important;
+}
+
 .text-primary {
-    color: #007bff!important;
+    color: #007bff !important;
 }
 
 .text-success {
@@ -19,15 +23,15 @@
 }
 
 .text-danger {
-    color: #dc3545!important;
+    color: #dc3545 !important;
 }
 
 .text-warning {
-    color: #e6b00f!important;
+    color: #e6b00f !important;
 }
 
 .text-info {
-    color: #17a2b8!important;
+    color: #17a2b8 !important;
 }
 
 .pointer-events {

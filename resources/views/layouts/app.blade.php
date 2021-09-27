@@ -69,7 +69,7 @@
                         </button>
                     </div>
 
-                    <div class="navbar-collapse pull-left collapse in" id="navbar-collapse" aria-expanded="true" style="">
+                    <div class="navbar-collapse pull-left collapse" id="navbar-collapse" aria-expanded="false">
                         <ul class="nav navbar-nav">
                             <li class="{{ Route::currentRouteNamed('index')?'active':'' }}"><a href="{{route('index')}}">Inicio</a></li>
                             <li class="{{ Route::currentRouteNamed('login.index')?'active':'' }}"><a href="{{route('login.index')}}">Iniciar Sesión</a></li>

@@ -5,6 +5,16 @@ function Tools() {
         return regex.test(date);
     }
 
+    this.validateEmail = function (value) {
+        var validRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        if (value.match(validRegex)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
     this.getDateYYMMDD = function (value) {
         var parts = value.split("/");
         return parts[0] + parts[1] + parts[2];
@@ -170,8 +180,16 @@ function Tools() {
             callback()
         });
     }
-    this.ModalAlertWarning = function (title, message) {
-        swal({ title: title, text: message, type: "warning", showConfirmButton: true, allowOutsideClick: false });
+    this.ModalAlertWarning = function (title, message, callback = function () { }) {
+        swal({
+            title: title,
+            text: message,
+            type: "warning",
+            showConfirmButton: true,
+            allowOutsideClick: false
+        }).then(() => {
+            callback()
+        });
     }
     this.ModalAlertError = function (title, message) {
         swal({ title: title, text: message, type: "error", showConfirmButton: true, allowOutsideClick: false });

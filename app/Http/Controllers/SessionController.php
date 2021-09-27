@@ -25,17 +25,25 @@ class SessionController extends Controller
             p.NumDoc,
             p.Nombres,
             p.Apellidos,
-            p.CIP
+            p.CIP,
+            p.Clave
             FROM Persona AS p
-            WHERE p.CIP = ? AND p.CIP = ? OR p.NumDoc = ? AND p.NumDoc = ?',
-            [$request->user, $request->password, $request->user, $request->password]
+            WHERE p.CIP = ?',
+            [$request->cip]
         );
-        if (is_object($persona)) {
-            $request->session()->put('LoginSession', $persona);
-            return response()->json([
-                'estatus' => 1,
-                'message' => 'Datos correctos',
-            ]);
+        if ($persona !== null) {
+            if (Hash::check($request->password, $persona->Clave)) {
+                $request->session()->put('LoginSession', $persona);
+                return response()->json([
+                    'estatus' => 1,
+                    'message' => 'Datos correctos',
+                ]);
+            } else {
+                return response()->json([
+                    'estatus' => '0',
+                    'message' => 'Usuario o contraseña incorrectas.',
+                ]);
+            }
         } else {
             return response()->json([
                 'estatus' => '0',

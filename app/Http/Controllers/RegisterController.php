@@ -15,7 +15,7 @@ class RegisterController extends Controller
         if ($request->session()->has('LoginSession')) {
             return redirect()->to('admin');
         } else {
-            return view('auth.register');
+            return view('auth.registrar');
         }
     }
 
@@ -27,20 +27,54 @@ class RegisterController extends Controller
     }
 
 
-    public function store(Request $request)
+    public function valid(Request $request)
+    {
+        $user = DB::selectOne('SELECT * FROM Persona WHERE NumDoc = ? AND CIP = ?', [
+            $request->dni,
+            $request->cip,
+        ]);
+        if ($user !== null) {
+            return response()->json([
+                'estatus' => 1,
+                'user' => $user,
+            ]);
+        } else {
+            return response()->json([
+                'estatus' => 0,
+                'message' => "Datos no encontrados.",
+            ]);
+        }
+    }
+
+    public function save(Request $request)
     {
         try {
             DB::beginTransaction();
-            $user = DB::insert('INSERT INTO users(name,email ,password) VALUES(?,?,?)', [
-                $request->name,
-                $request->email,
-                Hash::make($request->password)
+            DB::update('UPDATE Persona SET Clave = ? WHERE idDNI = ?', [
+                Hash::make($request->password),
+                $request->idDNI
             ]);
+
+            DB::delete('DELETE FROM Web where idDNI = ?', [
+                $request->idDNI
+            ]);
+
+            DB::insert('INSERT INTO Web(idDNI,Tipo,Direccion) VALUES(?,16,?)', [
+                $request->idDNI,
+                $request->email
+            ]);
+
             DB::commit();
-            return "OK";
+            return response()->json([
+                'estatus' => 1,
+                'message' => "Se guardo correctamente su contraseña, ahora puede ingresar al sistema usando su n° cip y su clave.",
+            ]);
         } catch (\PDOException $e) {
             DB::rollBack();
-            return $e->getMessage();
+            return response()->json([
+                'estatus' => 0,
+                'message' => "Error de conexión, intente nuevamente en un parte de minutos.",
+            ]);
         }
     }
 }

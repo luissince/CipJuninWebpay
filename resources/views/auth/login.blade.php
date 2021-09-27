@@ -88,7 +88,7 @@
                     })
                     .then(function(result) {
                         if (result.estatus === 1) {
-                            window.location.href = "{{ route('admin.index') }}";
+                            window.location.href = "{{ route('index') }}";
                         } else {
                             tools.ModalAlertWarning('Login', result.message, function() {
                                 form.elements['cip'].focus();
@@ -97,7 +97,6 @@
                         }
                     })
                     .catch(function(error) {
-                        console.error(error)
                         tools.ModalAlertError('Login', error.message);
                         isProccess = false;
                     });

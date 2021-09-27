@@ -1,19 +1,12 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\SessionController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\IdentifyController;
 
-Route::get('/', function (Request $request) {
-    if ($request->session()->has('LoginSession')) {
-        return view('admin.admin');
-    } else {
-        return view('welcome');
-    }
-})->name('index');
+Route::get('/', [AdminController::class, 'index'])->name('index');
 
 Route::get('/login', [SessionController::class, 'index'])->name('login.index');
 Route::get('/logout', [SessionController::class, 'logout'])->name('login.logout');
@@ -29,4 +22,4 @@ Route::post('/identify/valid', [IdentifyController::class, 'valid'])->name('iden
 Route::post('/identify/code', [IdentifyController::class, 'code'])->name('identify.code');
 Route::post('/identify/save', [IdentifyController::class, 'save'])->name('identify.save');
 
-Route::get('/admin', [AdminController::class, 'index'])->name('admin.index');
+// Route::get('/admin', [AdminController::class, 'index'])->name('admin.index');

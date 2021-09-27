@@ -11,7 +11,7 @@ class SessionController extends Controller
     public function index(Request $request)
     {
         if ($request->session()->has('LoginSession')) {
-            return redirect()->to('admin');
+            return redirect()->to('/');
         } else {
             return view('auth.login');
         }

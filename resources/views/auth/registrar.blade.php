@@ -39,9 +39,10 @@
 <script src="{{ asset('js/tools.js') }}"></script>
 <script>
     let tools = new Tools();
-    let isProccess = false;
 
     document.addEventListener('DOMContentLoaded', function() {
+        let isProccess = false;
+
 
         let form = document.getElementById('frmRegister');
         form.elements['dni'].focus();
@@ -128,13 +129,13 @@
                                 frmPassword.elements['password'].focus();
 
                                 frmPassword.elements['button'].addEventListener('click', function(event) {
-                                    onEventSubmitPassword(result.user.idDNI);
+                                    onEventSubmitPassword(frmPassword, result.user.idDNI);
                                 });
 
                                 frmPassword.addEventListener('keydown', function(event) {
                                     if (event.keyCode == 13) {
-                                        onEventSubmitPassword();
-                                        event.preventDefault(result.user.idDNI);
+                                        onEventSubmitPassword(frmPassword, result.user.idDNI);
+                                        event.preventDefault();
                                     }
 
                                 });
@@ -168,16 +169,19 @@
             }
         }
 
-        function onEventSubmitPassword(idDNI) {
+        function onEventSubmitPassword(frmPassword, idDNI) {
             if (frmPassword.elements['password'].value.trim().length == 0) {
                 tools.AlertWarning('', 'Ingrese una contraseña.');
                 frmPassword.elements['password'].focus();
+            } else if (!tools.validateEmail(frmPassword.elements['email'].value.trim())) {
+                tools.AlertWarning('', 'Ingrese su correo electrónico.');
+                frmPassword.elements['email'].focus();
             } else {
                 const data = new FormData(frmPassword);
                 data.append("idDNI", idDNI);
 
                 tools.ModalAlertInfo('Guardando', 'Procesando petición...');
-                fetch("{{ route('register.password')}}", {
+                fetch("{{ route('register.save')}}", {
                         method: 'POST',
                         body: data
                     })
@@ -203,21 +207,6 @@
                     });
             }
         }
-
-        // loadData();
     });
-
-    async function loadData() {
-        try {
-            let response = await fetch("{{route('register.data')}}");
-            if (!response.ok) {
-                throw new Error("Recurso no encontrado");
-            }
-            let result = await response.json();
-            console.log(result);
-        } catch (error) {
-            console.log(error.message);
-        }
-    }
 </script>
 @endsection

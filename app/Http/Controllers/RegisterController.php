@@ -13,19 +13,11 @@ class RegisterController extends Controller
     public function create(Request $request)
     {
         if ($request->session()->has('LoginSession')) {
-            return redirect()->to('admin');
+            return redirect()->to('/');
         } else {
             return view('auth.registrar');
         }
     }
-
-    public function data()
-    {
-        $persona = DB::select('SELECT * FROM persona');
-        return json_encode($persona);
-        // return view('auth.register', ['data' => $persona]);
-    }
-
 
     public function valid(Request $request)
     {

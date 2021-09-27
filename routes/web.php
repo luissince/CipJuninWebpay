@@ -13,13 +13,10 @@ Route::get('/logout', [SessionController::class, 'logout'])->name('login.logout'
 Route::post('/login', [SessionController::class, 'valid'])->name('login.valid');
 
 Route::get('/register', [RegisterController::class, 'create'])->name('register.index');
-Route::get('/register/data', [RegisterController::class, 'data'])->name('register.data');
 Route::post('/register/valid', [RegisterController::class, 'valid'])->name('register.valid');
-Route::post('/register/save', [RegisterController::class, 'save'])->name('register.password');
+Route::post('/register/save', [RegisterController::class, 'save'])->name('register.save');
 
 Route::get('/identify', [IdentifyController::class, 'index'])->name('identify.index');
 Route::post('/identify/valid', [IdentifyController::class, 'valid'])->name('identify.valid');
 Route::post('/identify/code', [IdentifyController::class, 'code'])->name('identify.code');
 Route::post('/identify/save', [IdentifyController::class, 'save'])->name('identify.save');
-
-// Route::get('/admin', [AdminController::class, 'index'])->name('admin.index');

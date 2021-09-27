@@ -46,7 +46,7 @@ class RegisterController extends Controller
         }
     }
 
-    public function savePassword(Request $request)
+    public function save(Request $request)
     {
         try {
             DB::beginTransaction();
@@ -54,6 +54,16 @@ class RegisterController extends Controller
                 Hash::make($request->password),
                 $request->idDNI
             ]);
+
+            DB::delete('DELETE FROM Web where idDNI = ?', [
+                $request->idDNI
+            ]);
+
+            DB::insert('INSERT INTO Web(idDNI,Tipo,Direccion) VALUES(?,16,?)', [
+                $request->idDNI,
+                $request->email
+            ]);
+
             DB::commit();
             return response()->json([
                 'estatus' => 1,

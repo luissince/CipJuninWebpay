@@ -24,7 +24,7 @@
             </div>
             <div class="row">
                 <div class="col-md-12">
-                    <button type="submit" class="btn btn-info btn-block btn-flat">Iniciar</button>
+                    <button type="button" class="btn btn-info btn-block btn-flat" name="button">Iniciar</button>
                 </div>
             </div>
             <div class="social-auth-links text-center">
@@ -51,8 +51,18 @@
             }
         });
 
-        form.addEventListener('submit', function(event) {
-            event.preventDefault();
+        form.elements['button'].addEventListener('click', function(event) {
+            onEventSubmitValid();
+        });
+
+        form.addEventListener('keydown', function(event) {
+            if (event.keyCode == 13) {
+                onEventSubmitValid();
+                event.preventDefault();
+            }
+        });
+
+        function onEventSubmitValid() {
             if (isProccess) return;
 
             if (form.elements['cip'].value.trim().length == 0) {
@@ -91,7 +101,7 @@
                         isProccess = false;
                     });
             }
-        });
+        }
     });
 </script>
 @endsection

@@ -110,12 +110,12 @@
                                 });
 
                                 frmCode.elements['button'].addEventListener('click', function(event) {
-                                    onEventSubmitCode(frmCode, result.token);
+                                    onEventSubmitCode(frmCode, result.token, result.user.idDNI);
                                 });
 
                                 frmCode.addEventListener('keydown', function(event) {
                                     if (event.keyCode == 13) {
-                                        onEventSubmitCode(frmCode, result.token);
+                                        onEventSubmitCode(frmCode, result.token, result.user.idDNI);
                                         event.preventDefault();
                                     }
                                 });
@@ -141,7 +141,7 @@
             }
         }
 
-        function onEventSubmitCode(frmCode, token) {
+        function onEventSubmitCode(frmCode, token, idDNI) {
             if (frmCode.elements['code'].value.trim().length == 0) {
                 tools.AlertWarning('', 'Ingrese el código de verificación.');
                 frmCode.elements['code'].focus();
@@ -162,7 +162,7 @@
                         }
                     })
                     .then(function(result) {
-                        if (result.estatus == 0) {
+                        if (result.estatus == 1) {
                             tools.ModalAlertSuccess('Validando', result.message, function() {
                                 $("#formSegundo").remove();
                                 $("#formTercero").append(`
@@ -182,12 +182,12 @@
                                 frmSave.elements['password'].focus();
 
                                 frmSave.elements['button'].addEventListener('click', function(event) {
-
+                                    onEventSubmitPassword(frmSave, idDNI);
                                 });
 
                                 frmSave.addEventListener('keydown', function(event) {
                                     if (event.keyCode == 13) {
-
+                                        onEventSubmitPassword(frmSave, idDNI);
                                         event.preventDefault();
                                     }
                                 });
@@ -204,8 +204,41 @@
             }
         }
 
-        function onEventSubmitPassword() {
+        function onEventSubmitPassword(frmSave, idDNI) {
+            if (frmSave.elements['password'].value.trim().length == 0) {
+                tools.AlertWarning('', 'Ingrese su nueva contraseña.');
+                frmSave.elements['password'].focus();
+            } else {
+                const data = new FormData(frmSave);
+                data.append('idDNI', idDNI);
+                tools.ModalAlertInfo('Guardando', 'Procesando petición...');
 
+                fetch("{{ route('identify.save') }}", {
+                        method: 'POST',
+                        body: data
+                    })
+                    .then(function(response) {
+                        if (response.ok) {
+                            return response.json()
+                        } else {
+                            throw "Error de conexión, intente nuevamente.";
+                        }
+                    })
+                    .then(function(result) {
+                        if (result.estatus == 1) {
+                            tools.ModalAlertSuccess('Guardando', result.message, function() {
+                                window.location.href = "{{ route('login.index') }}";
+                            });
+                        } else {
+                            tools.ModalAlertWarning('Guardando', result.message, function() {
+                                frmSave.elements['password'].focus();
+                            });
+                        }
+                    })
+                    .catch(function(error) {
+                        tools.ModalAlertError('Guardando', error.message);
+                    });
+            }
         }
 
     });

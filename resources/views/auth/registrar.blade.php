@@ -23,17 +23,9 @@
                 <input type="text" class="form-control" placeholder="N° Cip" name="cip" maxlength="10">
                 <span class="fa fa-user form-control-feedback"></span>
             </div>
-            <div class="form-group has-feedback">
-                <input type="email" class="form-control" placeholder="Correo Electrónico" name="email">
-                <span class="fa fa-at form-control-feedback"></span>
-            </div>
-            <div class="form-group has-feedback">
-                <input type="text" class="form-control" placeholder="N° de Celular" name="cel">
-                <span class="fa fa-phone form-control-feedback"></span>
-            </div>
             <div class="row">
                 <div class="col-md-12">
-                    <button type="submit" class="btn btn-info btn-block btn-flat">Enviar</button>
+                    <button type="button" class="btn btn-info btn-block btn-flat" name="button">Enviar</button>
                 </div>
                 <!-- /.col -->
             </div>
@@ -70,15 +62,18 @@
             }
         });
 
-        form.elements['cel'].addEventListener('keypress', function() {
-            var key = window.Event ? event.which : event.keyCode;
-            var c = String.fromCharCode(key);
-            if ((c < '0' || c > '9') && (c != '\b')) {
+        form.elements['button'].addEventListener('click', function(event) {
+            onEventSubmitRegister();
+        });
+
+        form.addEventListener('keydown', function(event) {
+            if (event.keyCode == 13) {
+                onEventSubmitRegister();
                 event.preventDefault();
             }
         });
-        form.addEventListener('submit', function(event) {
-            event.preventDefault();
+
+        function onEventSubmitRegister() {
             if (isProccess) return;
 
             if (form.elements['dni'].value.trim().length == 0) {
@@ -108,65 +103,44 @@
                             tools.ModalAlertSuccess('Procesando', "Sus datos se validaron correctamente.", function() {
                                 $("#formSegundo").empty();
                                 $("#formSegundo").append(`
-                                <p class="login-box-msg">Guardar contraseña.</p>
-                                <div class="no-padding" id="no-padding">
-                                </div>
-                                <form id="frmPassword" method="POST">        
-                                    @csrf                           
-                                    <div class="form-group has-feedback">
-                                        <input type="password" class="form-control" placeholder="Ingrese una contraseña" name="password">
-                                        <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+                                    <p class="login-box-msg">Guardar contraseña.</p>
+                                    <div class="no-padding" id="no-padding">
                                     </div>
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <button type="submit" class="btn btn-info btn-block btn-flat">Guardar</button>
+                                    <form id="frmPassword" method="POST">        
+                                        @csrf                           
+                                        <div class="form-group has-feedback">
+                                            <input type="password" class="form-control" placeholder="Ingrese una contraseña" name="password">
+                                            <span class="glyphicon glyphicon-lock form-control-feedback"></span>
                                         </div>
-                                        <!-- /.col -->
-                                    </div>
-                                </form>
-                               `);
-
+                                        <div class="form-group has-feedback">
+                                            <input type="email" class="form-control" placeholder="Correo Electrónico" name="email">
+                                            <span class="fa fa-at form-control-feedback"></span>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <button type="button" class="btn btn-info btn-block btn-flat" name="button">Guardar</button>
+                                            </div>
+                                            <!-- /.col -->
+                                        </div>
+                                    </form>
+                                `);
                                 let frmPassword = document.getElementById('frmPassword');
                                 frmPassword.elements['password'].focus();
 
-                                frmPassword.addEventListener('submit', function(event) {
-                                    event.preventDefault();
-                                    if (frmPassword.elements['password'].value.trim().length == 0) {
-                                        tools.AlertWarning('', 'Ingrese una contraseña.');
-                                        frmPassword.elements['password'].focus();
-                                    } else {
-                                        const data = new FormData(frmPassword);
-                                        data.append("idDNI", result.user.idDNI);
+                                frmPassword.elements['button'].addEventListener('click', function(event) {
+                                    onEventSubmitPassword(result.user.idDNI);
+                                });
 
-                                        tools.ModalAlertInfo('Guardando', 'Procesando petición...');
-                                        fetch("{{ route('register.password')}}", {
-                                                method: 'POST',
-                                                body: data
-                                            })
-                                            .then(function(response) {
-                                                if (response.ok) {
-                                                    return response.json()
-                                                } else {
-                                                    throw "Error de conexión, intente nuevamente.";
-                                                }
-                                            })
-                                            .then(function(result) {
-                                                if (result.estatus == 1) {
-                                                    tools.ModalAlertSuccess('Guardando', result.message, function() {
-                                                        window.location.href = "{{ route('login.logout') }}";
-                                                    });
-                                                } else {
-                                                    tools.ModalAlertWarning('Login', result.message);
-                                                }
-                                            })
-                                            .catch(function(error) {
-                                                tools.ModalAlertError('Guardando', "Se produjo un error interno, intente nuevamente en par de minutos.");
-                                                isProccess = false;
-                                            });
+                                frmPassword.addEventListener('keydown', function(event) {
+                                    if (event.keyCode == 13) {
+                                        onEventSubmitPassword();
+                                        event.preventDefault(result.user.idDNI);
                                     }
+
                                 });
 
                             });
+                            isProccess = false;
                         } else {
                             $("#no-padding").empty();
                             $("#no-padding").append(`<div class="alert alert-warning alert-dismissible">
@@ -192,7 +166,43 @@
                         isProccess = false;
                     });
             }
-        });
+        }
+
+        function onEventSubmitPassword(idDNI) {
+            if (frmPassword.elements['password'].value.trim().length == 0) {
+                tools.AlertWarning('', 'Ingrese una contraseña.');
+                frmPassword.elements['password'].focus();
+            } else {
+                const data = new FormData(frmPassword);
+                data.append("idDNI", idDNI);
+
+                tools.ModalAlertInfo('Guardando', 'Procesando petición...');
+                fetch("{{ route('register.password')}}", {
+                        method: 'POST',
+                        body: data
+                    })
+                    .then(function(response) {
+                        if (response.ok) {
+                            return response.json()
+                        } else {
+                            throw "Error de conexión, intente nuevamente.";
+                        }
+                    })
+                    .then(function(result) {
+                        if (result.estatus == 1) {
+                            tools.ModalAlertSuccess('Guardando', result.message, function() {
+                                window.location.href = "{{ route('login.logout') }}";
+                            });
+                        } else {
+                            tools.ModalAlertWarning('Login', result.message);
+                        }
+                    })
+                    .catch(function(error) {
+                        tools.ModalAlertError('Guardando', "Se produjo un error interno, intente nuevamente en par de minutos.");
+                        isProccess = false;
+                    });
+            }
+        }
 
         // loadData();
     });

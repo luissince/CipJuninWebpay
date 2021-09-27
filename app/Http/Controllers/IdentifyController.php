@@ -43,8 +43,14 @@ class IdentifyController extends Controller
                         $time
                     ]);
 
-                    $email = new EmailCodeMailable($random);
-                    Mail::to('alexanderlara1996@gmail.com')->send($email);
+                    $email = DB::selectOne('SELECT TOP 1 Direccion FROM Web WHERE idDNI = ?', [
+                        $user->idDNI
+                    ]);
+
+                    if ($email->Direccion !== null) {
+                        $send = new EmailCodeMailable($random);
+                        Mail::to($email->Direccion)->send($send);
+                    }
 
                     DB::commit();
                     $idToken = DB::getPdo()->lastInsertId();
@@ -59,7 +65,7 @@ class IdentifyController extends Controller
                     DB::rollBack();
                     return response()->json([
                         'estatus' => 0,
-                        'message' => "Error de conexión, intente nuevamente en un parte de minutos.",
+                        'message' => "33",
                     ]);
                 }
             }
@@ -104,7 +110,25 @@ class IdentifyController extends Controller
         }
     }
 
-    public function save()
+    public function save(Request $request)
     {
+        try {
+            DB::beginTransaction();
+            DB::update('UPDATE Persona SET Clave = ? WHERE idDNI = ?', [
+                Hash::make($request->password),
+                $request->idDNI
+            ]);
+            DB::commit();
+            return response()->json([
+                'estatus' => 1,
+                'message' => "Se guardo correctamente su contraseña, ahora puede ingresar al sistema usando su n° cip y su clave.",
+            ]);
+        } catch (\PDOException $ex) {
+            DB::rollBack();
+            return response()->json([
+                'estatus' => 0,
+                'message' => "Error de conexión, intente nuevamente en un parte de minutos.",
+            ]);
+        }
     }
 }

@@ -22,7 +22,7 @@ Route::post('/login', [SessionController::class, 'valid'])->name('login.valid');
 Route::get('/register', [RegisterController::class, 'create'])->name('register.index');
 Route::get('/register/data', [RegisterController::class, 'data'])->name('register.data');
 Route::post('/register/valid', [RegisterController::class, 'valid'])->name('register.valid');
-Route::post('/register/save', [RegisterController::class, 'savePassword'])->name('register.password');
+Route::post('/register/save', [RegisterController::class, 'save'])->name('register.password');
 
 Route::get('/identify', [IdentifyController::class, 'index'])->name('identify.index');
 Route::post('/identify/valid', [IdentifyController::class, 'valid'])->name('identify.valid');

@@ -43,7 +43,6 @@
     document.addEventListener('DOMContentLoaded', function() {
         let isProccess = false;
 
-
         let form = document.getElementById('frmRegister');
         form.elements['dni'].focus();
 
@@ -99,7 +98,7 @@
                         }
                     })
                     .then(function(result) {
-                        if (result.estatus == 1) {
+                        if (result.status == 1) {
                             $("#formPrimer").remove();
                             tools.ModalAlertSuccess('Procesando', "Sus datos se validaron correctamente.", function() {
                                 $("#formSegundo").empty();
@@ -193,7 +192,7 @@
                         }
                     })
                     .then(function(result) {
-                        if (result.estatus == 1) {
+                        if (result.status == 1) {
                             tools.ModalAlertSuccess('Guardando', result.message, function() {
                                 window.location.href = "{{ route('login.logout') }}";
                             });

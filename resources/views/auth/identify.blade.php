@@ -83,7 +83,7 @@
                         }
                     })
                     .then(function(result) {
-                        if (result.estatus === 1) {
+                        if (result.status === 1) {
                             tools.ModalAlertSuccess('Validando', result.message, function() {
                                 $("#formPrimer").remove();
                                 $("#formSegundo").append(`
@@ -122,7 +122,7 @@
 
                             });
                             isProccess = false;
-                        } else if (result.estatus === 2) {
+                        } else if (result.status === 2) {
                             tools.ModalAlertWarning('Validando', result.message, function() {
                                 window.location.href = "{{ route('register.index') }}";
                             });
@@ -162,7 +162,7 @@
                         }
                     })
                     .then(function(result) {
-                        if (result.estatus == 1) {
+                        if (result.status == 1) {
                             tools.ModalAlertSuccess('Validando', result.message, function() {
                                 $("#formSegundo").remove();
                                 $("#formTercero").append(`
@@ -225,7 +225,7 @@
                         }
                     })
                     .then(function(result) {
-                        if (result.estatus == 1) {
+                        if (result.status == 1) {
                             tools.ModalAlertSuccess('Guardando', result.message, function() {
                                 window.location.href = "{{ route('login.index') }}";
                             });

@@ -27,12 +27,12 @@ class RegisterController extends Controller
         ]);
         if ($user !== null) {
             return response()->json([
-                'estatus' => 1,
+                'status' => 1,
                 'user' => $user,
             ]);
         } else {
             return response()->json([
-                'estatus' => 0,
+                'status' => 0,
                 'message' => "Datos no encontrados.",
             ]);
         }
@@ -58,13 +58,13 @@ class RegisterController extends Controller
 
             DB::commit();
             return response()->json([
-                'estatus' => 1,
+                'status' => 1,
                 'message' => "Se guardo correctamente su contraseña, ahora puede ingresar al sistema usando su n° cip y su clave.",
             ]);
         } catch (\PDOException $e) {
             DB::rollBack();
             return response()->json([
-                'estatus' => 0,
+                'status' => 0,
                 'message' => "Error de conexión, intente nuevamente en un parte de minutos.",
             ]);
         }

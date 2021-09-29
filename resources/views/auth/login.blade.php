@@ -87,7 +87,7 @@
                         }
                     })
                     .then(function(result) {
-                        if (result.estatus === 1) {
+                        if (result.status === 1) {
                             window.location.href = "{{ route('index') }}";
                         } else {
                             tools.ModalAlertWarning('Login', result.message, function() {

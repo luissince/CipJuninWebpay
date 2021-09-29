@@ -49,6 +49,7 @@
     <script src="{{asset('adminlte/dist/js/demo.js')}}"></script>
     <script src="{{asset('js/sweetalert.min.js')}}"></script>
     <script src="{{asset('js/toastr.min.js')}}"></script>
+    <script src="{{asset('js/payment.js')}}"></script>
     <script src="{{asset('js/tools.js') }}"></script>
 </head>
 
@@ -69,9 +70,9 @@
                     </div>
                     <div class="navbar-collapse pull-left collapse" id="navbar-collapse" aria-expanded="false">
                         <ul class="nav navbar-nav">
-                            <li class="active"><a href="{{route('index')}}">Inicio</a></li>
-                            <li><a href="{{route('index')}}">Servicios</a></li>
-                            <li><a href="{{route('index')}}">Comprobantes</a></li>
+                            <li class="{{ Route::currentRouteNamed('index')?'active':'' }}"><a href="{{route('index')}}">Inicio</a></li>
+                            <li class="{{ Route::currentRouteNamed('service.index')?'active':'' }}"><a href="{{route('service.index')}}">Servicios</a></li>
+                            <li class="{{ Route::currentRouteNamed('voucher.index')?'active':'' }}"><a href="{{route('voucher.index')}}">Comprobantes</a></li>
                         </ul>
                     </div>
                     <div class="navbar-custom-menu">
@@ -83,7 +84,7 @@
                                     <!-- The user image in the navbar-->
                                     <img src="{{asset('images/usuario.png')}}" class="user-image" alt="User Image">
                                     <!-- hidden-xs hides the username on small devices so only the image appears. -->
-                                    <span class="hidden-xs">{{$persona->Apellidos}} {{$persona->Nombres}}</span>
+                                    <span class="hidden-xs">ING.</span>
                                 </a>
                                 <ul class="dropdown-menu">
                                     <!-- The user image in the menu -->

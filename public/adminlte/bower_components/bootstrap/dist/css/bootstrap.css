@@ -1,8 +1,15 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;500;800;900&display=swap");
-/* @font-face {
+/* @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@100;500;900&display=swap"); */
+@font-face {
     font-family: "SourceSansPro-SemiBold";
     src: url("./../fonts/SourceSansPro-SemiBold.ttf");
-} */
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
 html {
     -webkit-text-size-adjust: 100%;
@@ -12,16 +19,15 @@ html {
 }
 
 body {
-    /* font-family: "SourceSansPro-SemiBold"; */
-    font-family: "Poppins", sans-serif;
+    font-family: "SourceSansPro-SemiBold";
+    /* font-family: "Poppins", sans-serif; */
+    /* font-family: "Roboto", sans-serif; */
     font-style: normal;
     font-weight: normal;
     font-size: 14px;
-    line-height: 1.42857143;
     color: rgb(30, 29, 29);
     background-color: #fff;
     height: 100%;
-    margin: 0;
 }
 
 article,

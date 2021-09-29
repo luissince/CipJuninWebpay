@@ -36,24 +36,24 @@ class SessionController extends Controller
                 if (Hash::check($request->password, $persona->Clave)) {
                     $request->session()->put('LoginSession', $persona);
                     return response()->json([
-                        'estatus' => 1,
+                        'status' => 1,
                         'message' => 'Datos correctos',
                     ]);
                 } else {
                     return response()->json([
-                        'estatus' => '0',
+                        'status' => '0',
                         'message' => 'Usuario o contraseña incorrectas.',
                     ]);
                 }
             } else {
                 return response()->json([
-                    'estatus' => '0',
+                    'status' => '0',
                     'message' => 'Usuario o contraseña incorrectas.',
                 ]);
             }
         } catch (\PDOException $e) {
             return response()->json([
-                'estatus' => 0,
+                'status' => 0,
                 'message' => "Error de conexión, intente nuevamente en un parte de minutos.",
             ]);
         }

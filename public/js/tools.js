@@ -14,7 +14,6 @@ function Tools() {
         }
     }
 
-
     this.getDateYYMMDD = function (value) {
         var parts = value.split("/");
         return parts[0] + parts[1] + parts[2];
@@ -33,6 +32,19 @@ function Tools() {
                 "/" +
                 today.getFullYear()) :
                 today.getFullYear() + "-" + (today.getMonth() + 1 > 9 ? today.getMonth() + 1 : "0" + (today.getMonth() + 1)) + "-" + (today.getDate() > 9 ? today.getDate() : "0" + today.getDate())
+        );
+    }
+
+
+    this.getDateFormaDDMM = function (value) {
+        var parts = value.split("-");
+        let today = new Date(parts[0], parts[1] - 1, parts[2]);
+        return (
+            (today.getMonth() + 1 > 9 ?
+                today.getMonth() + 1 :
+                "0" + (today.getMonth() + 1)) +
+            "/" +
+            today.getFullYear()
         );
     }
 
@@ -73,6 +85,7 @@ function Tools() {
         }
         return hr + ":" + min + ":" + sec;
     }
+
 
     this.formatMoney = function (amount, decimalCount = 2, decimal = ".", thousands = "") {
         try {

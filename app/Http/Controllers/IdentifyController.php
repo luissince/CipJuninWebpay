@@ -29,7 +29,7 @@ class IdentifyController extends Controller
         if ($user !== null) {
             if ($user->Clave === null || $user->Clave === "") {
                 return response()->json([
-                    'estatus' => 2,
+                    'status' => 2,
                     'message' => "Usted tiene que crear una cuenta para continuar por favor."
                 ]);
             } else {
@@ -56,7 +56,7 @@ class IdentifyController extends Controller
                     $idToken = DB::getPdo()->lastInsertId();
 
                     return response()->json([
-                        'estatus' => 1,
+                        'status' => 1,
                         'message' => "Se generó el código de verificación.",
                         'user' => $user,
                         'token' => $idToken
@@ -64,14 +64,14 @@ class IdentifyController extends Controller
                 } catch (\PDOException $ex) {
                     DB::rollBack();
                     return response()->json([
-                        'estatus' => 0,
-                        'message' => "33",
+                        'status' => 0,
+                        'message' =>  "Error de conexión, intente nuevamente en un parte de minutos.",
                     ]);
                 }
             }
         } else {
             return response()->json([
-                'estatus' => 0,
+                'status' => 0,
                 'message' => "Detectamos que usted no se encuentra registrado.",
             ]);
         }
@@ -93,18 +93,18 @@ class IdentifyController extends Controller
             ]);
             if ($user !== null) {
                 return response()->json([
-                    'estatus' => 1,
+                    'status' => 1,
                     'message' => "El código se valido correctamente.",
                 ]);
             } else {
                 return response()->json([
-                    'estatus' => 0,
+                    'status' => 0,
                     'message' => "El código no existe o ha expirado.",
                 ]);
             }
         } catch (\PDOException $ex) {
             return response()->json([
-                'estatus' => 0,
+                'status' => 0,
                 'message' => "Error de conexión, intente nuevamente en un parte de minutos.",
             ]);
         }
@@ -120,13 +120,13 @@ class IdentifyController extends Controller
             ]);
             DB::commit();
             return response()->json([
-                'estatus' => 1,
+                'status' => 1,
                 'message' => "Se guardo correctamente su contraseña, ahora puede ingresar al sistema usando su n° cip y su clave.",
             ]);
         } catch (\PDOException $ex) {
             DB::rollBack();
             return response()->json([
-                'estatus' => 0,
+                'status' => 0,
                 'message' => "Error de conexión, intente nuevamente en un parte de minutos.",
             ]);
         }

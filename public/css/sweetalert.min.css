@@ -436,7 +436,7 @@ body.swal2-no-backdrop > .swal2-shown.swal2-bottom-right {
     display: none;
     position: relative;
     max-width: 100%;
-    border-radius: 6px;
+    border-radius: 0px;
 }
 
 .swal2-popup.swal2-toast {

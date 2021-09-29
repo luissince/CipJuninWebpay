@@ -5,6 +5,8 @@ use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\SessionController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\IdentifyController;
+use App\Http\Controllers\ServiceController;
+use App\Http\Controllers\VoucherController;
 
 Route::get('/', [AdminController::class, 'index'])->name('index');
 
@@ -20,3 +22,10 @@ Route::get('/identify', [IdentifyController::class, 'index'])->name('identify.in
 Route::post('/identify/valid', [IdentifyController::class, 'valid'])->name('identify.valid');
 Route::post('/identify/code', [IdentifyController::class, 'code'])->name('identify.code');
 Route::post('/identify/save', [IdentifyController::class, 'save'])->name('identify.save');
+
+Route::get('/service', [ServiceController::class, 'index'])->name('service.index');
+Route::post('/service/cuotas', [ServiceController::class, 'cuotas'])->name('service.cuotas');
+Route::post('/service/allComprobantes', [ServiceController::class, 'allComprobantes'])->name('service.allComprobantes');
+Route::post('/service/savePay', [ServiceController::class, 'savePay'])->name('service.savePay');
+
+Route::get('/voucher', [VoucherController::class, 'index'])->name('voucher.index');

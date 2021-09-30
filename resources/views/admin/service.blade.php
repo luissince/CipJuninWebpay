@@ -321,6 +321,19 @@
                 }
             });
 
+            $("#txtNumero").keyup(function(event) {
+                if (event.keyCode == 13) {
+                    if ($("#txtNumero").attr("disabled") == undefined) {
+                        if ($("#txtNumero").val().trim().length != 0) {
+                            if ($("#txtNumero").val().trim().length == 11) {
+                                loadSunatApi($("#txtNumero").val().trim());
+                            }
+                        }
+                    }
+                    event.preventDefault();
+                }
+            })
+
             $("#btnCobrar").click(function() {
                 registrarIngreso();
             });
@@ -921,14 +934,14 @@
                 let porcetaje = 4.20 / 100; //0.042
                 let montoAum =
                     sumaTotal > 0 && sumaTotal <= 50 ?
-                    sumaTotal + 0.5 :
+                    sumaTotal + 0.7 :
                     sumaTotal > 50 && sumaTotal <= 100 ?
-                    sumaTotal + 1 :
+                    sumaTotal + 1.20 :
                     sumaTotal > 100 && sumaTotal <= 500 ?
-                    sumaTotal + 1.50 :
+                    sumaTotal + 1.70 :
                     sumaTotal > 500 && sumaTotal <= 1000 ?
-                    sumaTotal + 2 :
-                    sumaTotal + 3;
+                    sumaTotal + 2.20 :
+                    sumaTotal + 3.70;
 
                 let igvp = 18;
                 let comision = montoAum * porcetaje; //4.20
@@ -967,14 +980,14 @@
                         let porcetaje = 4.20 / 100; //0.042
                         let montoAum =
                             sumaTotal > 0 && sumaTotal <= 50 ?
-                            sumaTotal + 0.5 :
+                            sumaTotal + 0.7 :
                             sumaTotal > 50 && sumaTotal <= 100 ?
-                            sumaTotal + 1 :
+                            sumaTotal + 1.20 :
                             sumaTotal > 100 && sumaTotal <= 500 ?
-                            sumaTotal + 1.50 :
+                            sumaTotal + 1.70 :
                             sumaTotal > 500 && sumaTotal <= 1000 ?
-                            sumaTotal + 2 :
-                            sumaTotal + 3;
+                            sumaTotal + 2.20 :
+                            sumaTotal + 3.70;
 
                         let igvp = 18;
                         let comision = montoAum * porcetaje;

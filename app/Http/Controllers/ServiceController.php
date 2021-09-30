@@ -313,107 +313,106 @@ class ServiceController extends Controller
             try {
                 $session = $request->session()->get('LoginSession');
 
+                $fechaactual = new DateTime('now');
+                $yearinicio = substr($fechaactual->format("Y"), 0, 2);
 
-                // $fechaactual = new DateTime('now');
-                // $yearinicio = substr($fechaactual->format("Y"), 0, 2);
+                $data =  array(
+                    'card_number' => $request->card_number,
+                    'cvv' => $request->cvv,
+                    'expiration_month' => $request->expiration_month,
+                    'expiration_year' => $yearinicio . $request->expiration_year,
+                    'email' => $request->email,
+                );
 
-                // $data =  array(
-                //     'card_number' => $request->card_number,
-                //     'cvv' => $request->cvv,
-                //     'expiration_month' => $request->expiration_month,
-                //     'expiration_year' => $yearinicio . $request->expiration_year,
-                //     'email' => $request->email,
-                // );
+                $data_string = json_encode($data);
 
-                // $data_string = json_encode($data);
+                $url = "https://secure.culqi.com/v2/tokens";
 
-                // $url = "https://secure.culqi.com/v2/tokens";
+                $curl = curl_init($url);
+                curl_setopt($curl, CURLOPT_URL, $url);
+                curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 
-                // $curl = curl_init($url);
-                // curl_setopt($curl, CURLOPT_URL, $url);
-                // curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+                $headers = array(
+                    'Content-Type: application/json',
+                    'Authorization: Bearer pk_test_69979cc0fa24d426'
+                );
+                curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+                curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
+                curl_setopt($curl, CURLOPT_POSTFIELDS, $data_string);
+                //for debug only!
+                curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
+                curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
 
-                // $headers = array(
-                //     'Content-Type: application/json',
-                //     'Authorization: Bearer pk_test_69979cc0fa24d426'
-                // );
-                // curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
-                // curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
-                // curl_setopt($curl, CURLOPT_POSTFIELDS, $data_string);
-                // //for debug only!
-                // curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
-                // curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+                $resp = curl_exec($curl);
 
-                // $resp = curl_exec($curl);
+                $http_code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+                curl_close($curl);
 
-                // $http_code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-                // curl_close($curl);
+                if ($http_code == 201) {
+                    $result = (object)json_decode($resp);
 
-                // if ($http_code == 201) {
-                //     $result = (object)json_decode($resp);
+                    $total = floatval($request->monto) * 100;
 
-                //     $total = floatval($request->monto) * 100;
+                    $data =  array(
+                        "amount" => $total,
+                        "currency_code" => "PEN",
+                        "email" => $request->email,
+                        "source_id" =>  $result->id
+                    );
 
-                //     $data =  array(
-                //         "amount" => $total,
-                //         "currency_code" => "PEN",
-                //         "email" => $request->email,
-                //         "source_id" =>  $result->id
-                //     );
+                    $data_string = json_encode($data);
 
-                //     $data_string = json_encode($data);
+                    $url = "https://api.culqi.com/v2/charges";
 
-                //     $url = "https://api.culqi.com/v2/charges";
+                    $curl = curl_init($url);
+                    curl_setopt($curl, CURLOPT_URL, $url);
+                    curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 
-                //     $curl = curl_init($url);
-                //     curl_setopt($curl, CURLOPT_URL, $url);
-                //     curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+                    $headers = array(
+                        'Content-Type: application/json',
+                        'Authorization: Bearer sk_test_6d00f5f32b58adea'
+                    );
+                    curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+                    curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
+                    curl_setopt($curl, CURLOPT_POSTFIELDS, $data_string);
+                    //for debug only!
+                    curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
+                    curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+                    $resp = curl_exec($curl);
 
-                //     $headers = array(
-                //         'Content-Type: application/json',
-                //         'Authorization: Bearer sk_test_6d00f5f32b58adea'
-                //     );
-                //     curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
-                //     curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
-                //     curl_setopt($curl, CURLOPT_POSTFIELDS, $data_string);
-                //     //for debug only!
-                //     curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
-                //     curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
-                //     $resp = curl_exec($curl);
+                    $http_code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+                    curl_close($curl);
 
-                //     $http_code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-                //     curl_close($curl);
+                    if ($http_code == 201) {
+                        try {
+                            DB::beginTransaction();
 
-                //     if ($http_code == 201) {
-                try {
-                    DB::beginTransaction();
-
-                    $codigoSerieNumeracion = DB::selectOne("SELECT dbo.Fc_Serie_Numero(?)", [
-                        $request->idTipoDocumento
-                    ]);
-                    $serie_numeracion = explode("-", ((array)$codigoSerieNumeracion)[""]);
-
-                    $idEmpresa = null;
-
-                    if ($request->empresa != null) {
-                        $empresa = DB::selectOne("SELECT * FROM EmpresaPersona WHERE NumeroRuc = ?", [
-                            $request->empresa["numero"]
-                        ]);
-
-                        if ($empresa != null) {
-                            $idEmpresa = $empresa->IdEmpresa;
-                        } else {
-                            DB::insert("INSERT INTO EmpresaPersona(NumeroRuc,Nombre,Direccion,Telefono,PaginaWeb,Email)VALUES(?,?,?,'','','')", [
-                                $request->empresa["numero"],
-                                $request->empresa["cliente"],
-                                is_null($request->empresa["direccion"]) ? "" : $request->empresa["direccion"],
+                            $codigoSerieNumeracion = DB::selectOne("SELECT dbo.Fc_Serie_Numero(?)", [
+                                $request->idTipoDocumento
                             ]);
+                            $serie_numeracion = explode("-", ((array)$codigoSerieNumeracion)[""]);
 
-                            $idEmpresa = DB::getPdo()->lastInsertId();
-                        }
-                    }
+                            $idEmpresa = null;
 
-                    DB::insert("INSERT INTO Ingreso(
+                            if ($request->empresa != null) {
+                                $empresa = DB::selectOne("SELECT * FROM EmpresaPersona WHERE NumeroRuc = ?", [
+                                    $request->empresa["numero"]
+                                ]);
+
+                                if ($empresa != null) {
+                                    $idEmpresa = $empresa->IdEmpresa;
+                                } else {
+                                    DB::insert("INSERT INTO EmpresaPersona(NumeroRuc,Nombre,Direccion,Telefono,PaginaWeb,Email)VALUES(?,?,?,'','','')", [
+                                        $request->empresa["numero"],
+                                        $request->empresa["cliente"],
+                                        is_null($request->empresa["direccion"]) ? "" : $request->empresa["direccion"],
+                                    ]);
+
+                                    $idEmpresa = DB::getPdo()->lastInsertId();
+                                }
+                            }
+
+                            DB::insert("INSERT INTO Ingreso(
                             idDni,
                             idEmpresaPersona,
                             TipoComprobante,
@@ -429,139 +428,139 @@ class ServiceController extends Controller
                             idBanco,
                             NumOperacion
                             )VALUES(?,?,?,?,?,GETDATE(),GETDATE(),?,?,0,?,?,?,?)", [
-                        $session->idDNI,
-                        $idEmpresa,
-                        $request->idTipoDocumento,
-                        $serie_numeracion[0],
-                        $serie_numeracion[1],
-                        $request->idUsuario,
-                        $request->estado,
-                        is_null($request->descripcion) ? "" : is_null($request->descripcion),
-                        $request->tipo,
-                        $request->idBanco,
-                        is_null($request->numOperacion) ? "" : $request->numOperacion
-                    ]);
+                                $session->idDNI,
+                                $idEmpresa,
+                                $request->idTipoDocumento,
+                                $serie_numeracion[0],
+                                $serie_numeracion[1],
+                                $request->idUsuario,
+                                $request->estado,
+                                is_null($request->descripcion) ? "" : is_null($request->descripcion),
+                                $request->tipo,
+                                $request->idBanco,
+                                is_null($request->numOperacion) ? "" : $request->numOperacion
+                            ]);
 
-                    $idIngreso = DB::getPdo()->lastInsertId();
+                            $idIngreso = DB::getPdo()->lastInsertId();
 
-                    if ($request->estadoCuotas == true) {
-                        DB::insert("INSERT INTO Cuota(idIngreso,FechaIni,FechaFin) VALUES(?,?,?)", [
-                            $idIngreso,
-                            $request->cuotasInicio,
-                            $request->cuotasFin
-                        ]);
-                    }
+                            if ($request->estadoCuotas == true) {
+                                DB::insert("INSERT INTO Cuota(idIngreso,FechaIni,FechaFin) VALUES(?,?,?)", [
+                                    $idIngreso,
+                                    $request->cuotasInicio,
+                                    $request->cuotasFin
+                                ]);
+                            }
 
-                    if ($request->estadoCertificadoHabilidad == true) {
+                            if ($request->estadoCertificadoHabilidad == true) {
 
-                        if ($request->estadoCuotas == true) {
-                            $resultPago = $request->cuotasFin;
-                        } else {
-                            $cmdUltimoPago = DB::selectOne("SELECT 
+                                if ($request->estadoCuotas == true) {
+                                    $resultPago = $request->cuotasFin;
+                                } else {
+                                    $cmdUltimoPago = DB::selectOne("SELECT 
                             cast(ISNULL(ul.FechaUltimaCuota, c.FechaColegiado)as date) as UltimoPago     
                             from Persona as p inner join Colegiatura as c
                             on p.idDNI = c.idDNI and c.Principal = 1
                             left outer join ULTIMACuota as ul
                             on p.idDNI = ul.idDNI
                             WHERE p.idDNI = ?", [
-                                $session->idDNI
-                            ]);
-                            if ($cmdUltimoPago == null) {
-                                throw new Exception("Erro en obtener la fecha del ultimo pago.");
+                                        $session->idDNI
+                                    ]);
+                                    if ($cmdUltimoPago == null) {
+                                        throw new Exception("Erro en obtener la fecha del ultimo pago.");
+                                    }
+                                    $resultPago = $cmdUltimoPago->UltimoPago;
+                                }
+
+                                $cmdIngeniero = DB::selectOne("SELECT Condicion FROM Persona WHERE idDNI = ?", [
+                                    $session->idDNI
+                                ]);
+                                $resultIngeniero =  $cmdIngeniero;
+
+                                $date = new DateTime($resultPago);
+                                if ($resultIngeniero->Condicion == "V") {
+                                    $date->modify('+9 month');
+                                    $date->modify('last day of this month');
+                                } else if ($resultIngeniero->Condicion == "T") {
+                                    $fechanow = new DateTime('now');
+                                    $date =  $fechanow;
+                                    $date->modify('+3 month');
+                                    $date->modify('last day of this month');
+                                } else {
+                                    $date->modify('+3 month');
+                                    $date->modify('last day of this month');
+                                }
+                                $ultimoPago = $date->format('Y-m-d');
+
+                                $cmdCorrelativo = DB::selectOne("SELECT * FROM CorrelativoCERT WHERE TipoCert = 1");
+                                if ($cmdCorrelativo == null) {
+                                    $resultCorrelativo = 1;
+                                } else {
+                                    $cmdCorrelativo = DB::selectOne("SELECT MAX(Numero)+1 AS 'Numero' FROM CorrelativoCERT WHERE TipoCert = 1");
+                                    $resultCorrelativo = $cmdCorrelativo->Numero;
+                                }
+
+                                DB::insert("INSERT INTO CERTHabilidad(idIUsuario,idColegiatura,Numero,Asunto,Entidad,Lugar,Fecha,HastaFecha,Anulado,idIngreso) VALUES(?,?,?,?,?,?,GETDATE(),?,?,?)", [
+                                    $request->idUsuario,
+                                    $request->objectCertificadoHabilidad["idEspecialidad"],
+                                    $resultCorrelativo,
+                                    $request->objectCertificadoHabilidad["asunto"],
+                                    $request->objectCertificadoHabilidad["entidad"],
+                                    $request->objectCertificadoHabilidad["lugar"],
+                                    $ultimoPago,
+                                    $request->objectCertificadoHabilidad["anulado"],
+                                    $idIngreso
+                                ]);
+
+                                DB::insert("INSERT INTO CorrelativoCERT(TipoCert,Numero) VALUES(1,?)", [
+                                    $resultCorrelativo
+                                ]);
                             }
-                            $resultPago = $cmdUltimoPago->UltimoPago;
-                        }
 
-                        $cmdIngeniero = DB::selectOne("SELECT Condicion FROM Persona WHERE idDNI = ?", [
-                            $session->idDNI
-                        ]);
-                        $resultIngeniero =  $cmdIngeniero;
-
-                        $date = new DateTime($resultPago);
-                        if ($resultIngeniero->Condicion == "V") {
-                            $date->modify('+9 month');
-                            $date->modify('last day of this month');
-                        } else if ($resultIngeniero->Condicion == "T") {
-                            $fechaactual = new DateTime('now');
-                            $date =  $fechaactual;
-                            $date->modify('+3 month');
-                            $date->modify('last day of this month');
-                        } else {
-                            $date->modify('+3 month');
-                            $date->modify('last day of this month');
-                        }
-                        $ultimoPago = $date->format('Y-m-d');
-
-                        $cmdCorrelativo = DB::selectOne("SELECT * FROM CorrelativoCERT WHERE TipoCert = 1");
-                        if ($cmdCorrelativo == null) {
-                            $resultCorrelativo = 1;
-                        } else {
-                            $cmdCorrelativo = DB::selectOne("SELECT MAX(Numero)+1 AS 'Numero' FROM CorrelativoCERT WHERE TipoCert = 1");
-                            $resultCorrelativo = $cmdCorrelativo->Numero;
-                        }
-
-                        DB::insert("INSERT INTO CERTHabilidad(idIUsuario,idColegiatura,Numero,Asunto,Entidad,Lugar,Fecha,HastaFecha,Anulado,idIngreso) VALUES(?,?,?,?,?,?,GETDATE(),?,?,?)", [
-                            $request->idUsuario,
-                            $request->objectCertificadoHabilidad["idEspecialidad"],
-                            $resultCorrelativo,
-                            $request->objectCertificadoHabilidad["asunto"],
-                            $request->objectCertificadoHabilidad["entidad"],
-                            $request->objectCertificadoHabilidad["lugar"],
-                            $ultimoPago,
-                            $request->objectCertificadoHabilidad["anulado"],
-                            $idIngreso
-                        ]);
-
-                        DB::insert("INSERT INTO CorrelativoCERT(TipoCert,Numero) VALUES(1,?)", [
-                            $resultCorrelativo
-                        ]);
-                    }
-
-                    foreach ($request->ingresos as $value) {
-                        DB::insert("INSERT INTO Detalle(
+                            foreach ($request->ingresos as $value) {
+                                DB::insert("INSERT INTO Detalle(
                             idIngreso,
                             idConcepto,
                             Cantidad,
                             Monto
                             )VALUES(?,?,?,?)", [
-                            $idIngreso,
-                            $value['idConcepto'],
-                            $value['cantidad'],
-                            $value['monto'],
+                                    $idIngreso,
+                                    $value['idConcepto'],
+                                    $value['cantidad'],
+                                    $value['monto'],
+                                ]);
+                            }
+
+                            DB::commit();
+                            return response()->json([
+                                'status' => 1,
+                                'message' => "Se registro correctamente el pago."
+                            ]);
+                        } catch (PDOException $ex) {
+                            DB::rollback();
+                            return response()->json([
+                                'status' => 0,
+                                'message' => $ex->getMessage(),
+                            ]);
+                        } catch (Exception $ex) {
+                            DB::rollback();
+                            return response()->json([
+                                'status' => 0,
+                                'message' => $ex->getMessage(),
+                            ]);
+                        }
+                    } else {
+                        return response()->json([
+                            "status" => 0,
+                            "message" => ((object)json_decode($resp))->merchant_message
                         ]);
                     }
-
-                    DB::commit();
+                } else {
+                    $result = (object)json_decode($resp);
                     return response()->json([
-                        'status' => 1,
-                        'message' => "Se registro correctamente el pago."
-                    ]);
-                } catch (PDOException $ex) {
-                    DB::rollback();
-                    return response()->json([
-                        'status' => 0,
-                        'message' => $ex->getMessage(),
-                    ]);
-                } catch (Exception $ex) {
-                    DB::rollback();
-                    return response()->json([
-                        'status' => 0,
-                        'message' => $ex->getMessage(),
+                        "status" => 0,
+                        "message" => "Error al crear el token id, intente nuevamente porfavor."
                     ]);
                 }
-                //     } else {
-                //         return response()->json([
-                //             "status" => 0,
-                //             "message" => ((object)json_decode($resp))->merchant_message
-                //         ]);
-                //     }
-                // } else {
-                //     $result = (object)json_decode($resp);
-                //     return response()->json([
-                //         "status" => 0,
-                //         "message" => "Error al crear el token id, intente nuevamente porfavor."
-                //     ]);
-                // }
             } catch (Exception $ex) {
                 return response()->json([
                     "status" => 0,

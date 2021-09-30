@@ -35,6 +35,6 @@ Route::get('/voucher/certhabilidad', [VoucherController::class, 'certhabilidad']
 Route::get('/voucher/certobra', [VoucherController::class, 'certobra'])->name('voucher.certobra');
 Route::get('/voucher/certproyecto', [VoucherController::class, 'certproyecto'])->name('voucher.certproyecto');
 Route::post('/voucher/invoiceall', [VoucherController::class, 'invoiceall'])->name('voucher.invoiceall');
-Route::post('/voucher/certhabilidadall', [VoucherController::class, 'invoice'])->name('voucher.certhabilidadall');
-Route::post('/voucher/certobraall', [VoucherController::class, 'invoice'])->name('voucher.certobraall');
-Route::post('/voucher/certproyectoall', [VoucherController::class, 'invoice'])->name('voucher.certproyectoall');
+Route::post('/voucher/certhabilidadall', [VoucherController::class, 'certhabilidadall'])->name('voucher.certhabilidadall');
+// Route::post('/voucher/certobraall', [VoucherController::class, 'invoice'])->name('voucher.certobraall');
+// Route::post('/voucher/certproyectoall', [VoucherController::class, 'invoice'])->name('voucher.certproyectoall');

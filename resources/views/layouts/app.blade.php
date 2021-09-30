@@ -62,7 +62,7 @@
                     <div class="navbar-header">
                         <a href="{{route('index')}}" class="logo">
                             <span class="logo-lg">
-                                <img src="{{asset('images/cip.png')}}" width="28"> CIP CD JUNÍN
+                                <img src="{{asset('images/cip.png')}}" width="28"> CIP VIRTUAL
                             </span>
                         </a>
                         <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse">

@@ -273,6 +273,137 @@ class VoucherController extends Controller
         }
     }
 
+    public function certhabilidadall(Request $request)
+    {
+        try {
+            $session = $request->session()->get('LoginSession');
+
+            $opcion = $request->opcion;
+            $buscar = $request->buscar;
+            $fechaInicio = $request->fechaInicio;
+            $fechaFinal = $request->fechaFinal;
+            $posicionPagina = $request->posicionPagina;
+            $filasPorPagina = $request->filasPorPagina;
+
+            $arrayCertHabilidad = array();
+            $cmdCertHabilidad = DB::select("SELECT 
+            p.NumDoc, 
+            p.Nombres,
+            p.Apellidos,
+			p.CIP,
+            e.Especialidad, 
+            ch.Numero, 
+            ch.Asunto, 
+            ch.Entidad, 
+            ch.Lugar, 
+            convert(VARCHAR, CAST(ch.Fecha AS DATE),103) AS Fecha, 
+            convert(VARCHAR, CAST(ch.HastaFecha AS DATE),103) AS HastaFecha, 
+            ch.idIngreso,ch.Anulado AS Estado 
+            FROM CERTHabilidad AS ch
+            INNER JOIN Ingreso AS i ON i.idIngreso = ch.idIngreso
+            INNER JOIN Persona AS p On p.idDNI = i.idDNI
+            INNER JOIN Colegiatura AS c ON p.idDNI = c.idDNI AND  c.idColegiado = ch.idColegiatura
+            INNER JOIN Especialidad AS e ON e.idEspecialidad = c.idEspecialidad
+            WHERE
+            p.idDNI = ? AND i.Estado = 'C'
+            AND
+            (
+                $opcion = 0 AND i.Fecha BETWEEN ? AND ?
+                OR
+                $opcion = 1 AND ch.Numero LIKE CONCAT(?,'%')
+                OR
+                $opcion = 1 AND ch.Asunto LIKE CONCAT(?,'%')
+                OR
+                $opcion = 1 AND ch.Entidad LIKE CONCAT(?,'%')
+                OR
+                $opcion = 1 AND ch.Lugar LIKE CONCAT(?,'%')
+            )
+            ORDER BY i.Fecha DESC,i.Hora DESC
+            offset ? ROWS FETCH NEXT ? ROWS only", [
+                $session->idDNI,
+
+                $fechaInicio,
+                $fechaFinal,
+
+                $buscar,
+                $buscar,
+                $buscar,
+                $buscar,
+
+                $posicionPagina,
+                $filasPorPagina
+            ]);
+            $count = 0;
+
+            foreach ($cmdCertHabilidad as $row) {
+                $count++;
+                array_push($arrayCertHabilidad, array(
+                    "id" => $count + $posicionPagina,
+                    "idIngreso" => $row->idIngreso,
+                    "dni" => $row->NumDoc,
+                    "usuario" => $row->Nombres,
+                    "apellidos" => $row->Apellidos,
+                    "numeroCip" => $row->CIP,
+                    "especialidad" => $row->Especialidad,
+                    "numCertificado" => $row->Numero,
+                    "asunto" => $row->Asunto,
+                    "entidad" => $row->Entidad,
+                    "lugar" => $row->Lugar,
+                    "fechaPago" => $row->Fecha,
+                    "fechaVencimiento" => $row->HastaFecha,
+                    "estado" => $row->Estado == 0
+                ));
+            }
+
+            $comandoTotal = DB::selectOne("SELECT COUNT(*) AS Total FROM CERTHabilidad AS ch
+            INNER JOIN Ingreso AS i ON i.idIngreso = ch.idIngreso
+            INNER JOIN Persona AS p On p.idDNI = i.idDNI
+            INNER JOIN Colegiatura AS c ON p.idDNI = c.idDNI AND  c.idColegiado = ch.idColegiatura
+            INNER JOIN Especialidad AS e ON e.idEspecialidad = c.idEspecialidad
+            WHERE
+            p.idDNI = ? AND i.Estado = 'C'
+            AND
+            (
+                $opcion = 0 AND i.Fecha BETWEEN ? AND ?
+                OR
+                $opcion = 1 AND ch.Numero LIKE CONCAT(?,'%')
+                OR
+                $opcion = 1 AND ch.Asunto LIKE CONCAT(?,'%')
+                OR
+                $opcion = 1 AND ch.Entidad LIKE CONCAT(?,'%')
+                OR
+                $opcion = 1 AND ch.Lugar LIKE CONCAT(?,'%')
+            )", [
+                $session->idDNI,
+
+                $fechaInicio,
+                $fechaFinal,
+
+                $buscar,
+                $buscar,
+                $buscar,
+                $buscar,
+            ]);
+            $resultTotal = $comandoTotal->Total;
+
+            return response()->json([
+                "status" => 1,
+                "data" => $arrayCertHabilidad,
+                "total" => $resultTotal
+            ]);
+        } catch (Exception $ex) {
+            return response()->json([
+                "status" => 0,
+                "message" => "Error de conexión, intente nuevamente en un parte de minutos.",
+            ]);
+        } catch (PDOException $ex) {
+            return response()->json([
+                "status" => 0,
+                "message" => "Error de conexión, intente nuevamente en un parte de minutos.",
+            ]);
+        }
+    }
+
     public function certobra(Request $request)
     {
         if ($request->session()->has('LoginSession')) {

@@ -30,3 +30,11 @@ Route::post('/service/allComprobantes', [ServiceController::class, 'allComproban
 Route::post('/service/savePay', [ServiceController::class, 'savePay'])->name('service.savePay');
 
 Route::get('/voucher', [VoucherController::class, 'index'])->name('voucher.index');
+Route::get('/voucher/invoice', [VoucherController::class, 'invoice'])->name('voucher.invoice');
+Route::get('/voucher/certhabilidad', [VoucherController::class, 'certhabilidad'])->name('voucher.certhabilidad');
+Route::get('/voucher/certobra', [VoucherController::class, 'certobra'])->name('voucher.certobra');
+Route::get('/voucher/certproyecto', [VoucherController::class, 'certproyecto'])->name('voucher.certproyecto');
+Route::post('/voucher/invoiceall', [VoucherController::class, 'invoiceall'])->name('voucher.invoiceall');
+Route::post('/voucher/certhabilidadall', [VoucherController::class, 'invoice'])->name('voucher.certhabilidadall');
+Route::post('/voucher/certobraall', [VoucherController::class, 'invoice'])->name('voucher.certobraall');
+Route::post('/voucher/certproyectoall', [VoucherController::class, 'invoice'])->name('voucher.certproyectoall');

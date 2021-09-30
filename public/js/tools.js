@@ -302,10 +302,16 @@ function Tools() {
         });
 
         let promiseFetch = new Promise(function (resolve, reject) {
-            fetch(url, header).then((response) => {
+            fetch(url, header).then(response => {
                 if (response.ok) {
-                    return response.json();
+                    return response.text();
                 } else {
+                    return new Error('Error de conexión.');
+                }
+            }).then((json) => {
+                try {
+                    return JSON.parse(json);
+                } catch (e) {
                     return new Error('Formato del json no aceptada.');
                 }
             }).then((result) => {

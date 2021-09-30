@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title','Home')
+@section('title','CIP CD JUNÍN')
 
 @section('content')
 
@@ -34,7 +34,7 @@
         <img src="{{asset('images/mastercard.png')}}" alt="Mastercard">
         <img src="{{asset('images/american-express.png')}}" alt="American Express">
         <p class="text-muted well well-sm no-shadow" style="margin-top: 10px;">
-            Esta tienda está autorizada por Visa|Mastercard|American Express para realizar transacciones electrónicas.
+            Esta entidad está autorizada por Visa|Mastercard|American Express para realizar transacciones electrónicas.
         </p>
     </div>
 </div>

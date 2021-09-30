@@ -73,15 +73,9 @@
 }
 
 .content-wrapper {
-<<<<<<< HEAD
-    min-height: 100%;    
-    background-color: #F4F4F4;
-    z-index: 800
-=======
     min-height: 100%;
     background-color: #ffffff;
     z-index: 800;
->>>>>>> 273fff6106da8d4da69ef6bc45f70384c381bb0d
 }
 
 .main-footer {
@@ -170,7 +164,7 @@ a:active,
 a:focus {
     outline: none;
     text-decoration: none;
-    color: #72afd2;
+    color: #0e65bd;
 }
 
 .page-header {
@@ -1930,7 +1924,7 @@ a:focus {
     border-top: 3px solid #d2d6de;
     margin-bottom: 20px;
     width: 100%;
-    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+    /* box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1); */
 }
 
 .box.box-primary {
@@ -2159,7 +2153,7 @@ a:focus {
 }
 
 .box-header {
-    color: #444;
+    color: #020203;
     display: block;
     padding: 10px;
     position: relative;

@@ -10,7 +10,7 @@
         <tr style="width:100%;">
             <td style="width:20%;"></td>
             <td style="width:60%; font-size:18px; font-weight:bold;text-align: center;">
-                <img src="{{ $message->embed('./images/logologin.png') }}" style="width:80px;" />
+                <img src="{{ $message->embed('./images/logoemail.png') }}" style="width:80px;" />
                 <h2> COLEGIO DE INGENIEROS DEL PERÚ - CD Junín</h2>
             </td>
             <td style="width:20%;"></td>

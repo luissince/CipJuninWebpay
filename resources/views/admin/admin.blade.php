@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title','Admin')
+@section('title','CIP CD JUNÍN')
 
 @section('content')
 

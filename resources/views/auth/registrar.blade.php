@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title','Home')
+@section('title','CIP CD JUNÍN')
 
 @section('content')
 <div class="login-box">

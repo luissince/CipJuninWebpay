@@ -8,6 +8,7 @@
     <link rel="icon" href="{{asset('images/insignia.png')}}">
 
     <title>@yield('title')</title>
+    <meta name="description" content="Inicia sesión en el Cip Virtual para poder ver el estado de sus cuotas, visualizar boletas y facturas, realizar pagos de sus cuotas y tramitar sus certificados(A,B,C).">
 
     <!-- Bootstrap 3.3.7 -->
     <link rel="stylesheet" href="{{asset('adminlte/bower_components/bootstrap/dist/css/bootstrap.css')}}">

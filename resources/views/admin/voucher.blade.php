@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title','CIP CD JUNÍN')
+@section('title','CIP VIRTUAL - JUNÍN')
 
 @section('content')
 

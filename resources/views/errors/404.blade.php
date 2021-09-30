@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title','CIP CD JUNÍN')
+@section('title','CIP VIRTUAL - JUNÍN')
 
 @section('content')
 <div class="error-page">

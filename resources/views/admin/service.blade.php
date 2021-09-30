@@ -33,8 +33,6 @@
                                 </button>
                                 <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
                                     <li><button id="btnCertHabilidad" type="button" class="btn btn-default">Certificado de Habilidad(A)</button></li>
-                                    <li><button id="btnCertResidenciaObra" type="button" class="btn btn-default">Certificado de Residencia de Obra(B)</button></li>
-                                    <li><button id="btnCertProyecto" type="button" class="btn btn-default">Certificado de Proyecto(C)</button></li>
                                 </ul>
                             </div>
                         </div>
@@ -60,6 +58,21 @@
                 </div>
             </div>
         </div>
+        <!--  -->
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <h5 class="no-margin"> Descripcón </h5>
+            </div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-md-12 col-sm-12 col-xs-12">
+                        <div class="form-group">
+                            <textarea id="txtDescripcion" placeholder="Ingrese alguna descripción que crea que sea necesario para ser visualizado por el cip." class="form-control"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- panel derecho de cobro -->
@@ -70,41 +83,62 @@
             </div>
 
             <div class="panel-body">
+                <div class="box no-border ">
+                    <div class="box-body no-padding">
 
-                <div class="row">
-                    <div class="col-md-12">
-                        <button id="btnCobrar" class="btn btn-success btn-block">
-                            <div class="col-md-6 text-left">
-                                <h4>PAGAR</h4>
-                            </div>
-                            <div class="col-md-6 text-right">
-                                <h4 id="lblSumaTotal">0.00</h4>
-                            </div>
-                        </button>
-                    </div>
-                </div>
 
-                <div class="row">
-                    <div class="col-md-12 col-sm-12 col-xs-12">
-                        <h5>Empresa a Facturar</h5>
-                        <div class="form-group">
-                            <div class="input-group">
-                                <div class="input-group-btn">
-                                    <button type="button" id="btnAddEmpresa" class="btn btn-primary btn-flat">Nuevo</button>
-                                </div>
-                                <select class="form-control select2" id="cbEmpresa">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <button id="btnCobrar" class="btn btn-success btn-block">
+                                    <div class="col-md-6 text-left">
+                                        <h4>PAGAR</h4>
+                                    </div>
+                                    <div class="col-md-6 text-right">
+                                        <h4 id="lblSumaTotal">0.00</h4>
+                                    </div>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12 text-left no-margin">
+                                <h5>Comprobante</h5>
+                                <select class="form-control" id="cbComprobante">
+                                    <option value="">- Seleccione -</option>
                                 </select>
                             </div>
                         </div>
-                    </div>
-                </div>
 
-                <div class="row">
-                    <div class="col-md-12 text-left no-margin">
-                        <h5>Comprobante</h5>
-                        <select class="form-control" id="cbComprobante">
-                            <option value="">- Seleccione -</option>
-                        </select>
+                        <div class="row">
+                            <div class="col-md-12 text-left no-margin">
+                                <h5>D.N.I./R.U.C.</h5>
+                                <div class="input-group">
+                                    <div class="input-group-btn">
+                                        <button type="button" id="btnSunat" class="btn btn-default btn-flat"><img src="{{asset('images/sunat_logo.png')}}" width="16" height="16"></button>
+                                    </div>
+                                    <input type="text" class="form-control" id="txtNumero" placeholder="Número del documento" maxlength="11" />
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12 text-left no-margin">
+                                <h5>Nombres/Razón Social</h5>
+                                <input type="text" class="form-control" id="txtCliente" placeholder="Nombre Completo o Razón Social" />
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12 text-left no-margin">
+                                <h5>Dirección</h5>
+                                <input type="text" class="form-control" id="txtDireccion" placeholder="Dirección" />
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div id="divOverlay">
                     </div>
                 </div>
 
@@ -112,6 +146,7 @@
 
         </div>
     </div>
+
 </div>
 
 <script>
@@ -119,6 +154,7 @@
         let tools = new Tools();
 
         //cuotas
+        let stateCuotas = false;
         let cuotas = [];
         let countCurrentDate = 0;
         let yearCurrentView = "";
@@ -127,11 +163,17 @@
         let cuotasInicio = "";
         let cuotasFin = "";
 
-        //colegiado
-        let idDNI = "{{ $persona->idDNI }}";
-        window.CSRF_TOKEN = '{{ csrf_token() }}';
+        //certficado de habilidad
+        let certificadoHabilidad = {};
+        let certificadoHabilidadEstado = false;
 
-        // 
+        //colegiado
+        window.CSRF_TOKEN = '{{ csrf_token() }}';
+        let documento = "{{$persona->NumDoc}}";
+        let cliente = "{{$persona->Apellidos.' '.$persona->Nombres }}";
+        let direccion = "{{$direccion}}";
+
+        // facturacion
         let comprobantes = [];
         let UsarRuc = false;
         let newEmpresa = 0;
@@ -150,6 +192,44 @@
             $("#btnCertificado").attr('data-toggle', 'dropdown');
             $("#btnCertificado").attr('aria-expanded', 'true');
 
+            /****************************************************/
+            //-----CERTIFICADO DE HABILIDAD
+            $("#btnCertHabilidad").click(function() {
+                $('#mdCertHabilidad').modal('show');
+                loadCertificadoHabilidad();
+            });
+
+            $("#btnCertHabilidad").keypress(function(event) {
+                if (event.keyCode === 13) {
+                    $('#mdCertHabilidad').modal('show');
+                    loadCertificadoHabilidad();
+                    event.preventDefault();
+                }
+            });
+
+            $("#btnAceptarCertificado").click(function() {
+                validateIngresosCertificadoHabilidad();
+            });
+
+            $("#btnAceptarCertificado").keypress(function(event) {
+                if (event.keyCode === 13) {
+                    validateIngresosCertificadoHabilidad();
+                    event.preventDefault();
+                }
+            });
+
+            $("#btnCancelarCertificado").click(function() {
+                $('#mdCertHabilidad').modal('hide');
+                clearIngresosCertificadoHabilidad()
+            });
+
+            $("#btnCloseCertificado").click(function() {
+                $('#mdCertHabilidad').modal('hide');
+                clearIngresosCertificadoHabilidad()
+            });
+
+            /****************************************************/
+            //-----CUOTAS
             $("#btnCuotas").click(function() {
                 eventCuota();
             });
@@ -205,12 +285,39 @@
             $("#cbComprobante").change(function() {
                 for (let i = 0; i < comprobantes.length; i++) {
                     if (comprobantes[i].IdTipoComprobante == $(this).val()) {
-                        if (comprobantes[i].UsarRuc == "1") {
+                        if (comprobantes[i].UsarRuc == 1) {
+                            $("#txtNumero").attr("disabled", false);
+                            $("#txtCliente").attr("disabled", false);
+                            $("#txtDireccion").attr("disabled", false);
+
+
+                            $("#txtNumero").val('');
+                            $("#txtCliente").val('');
+                            $("#txtDireccion").val('');
+
                             UsarRuc = true;
                         } else {
+                            $("#txtNumero").attr("disabled", true);
+                            $("#txtCliente").attr("disabled", true);
+                            $("#txtDireccion").attr("disabled", true);
+
+                            $("#txtNumero").val(documento);
+                            $("#txtCliente").val(cliente);
+                            $("#txtDireccion").val(direccion);
+
                             UsarRuc = false;
                         }
                         break;
+                    }
+                }
+            });
+
+            $("#btnSunat").click(function() {
+                if ($("#txtNumero").attr("disabled") == undefined) {
+                    if ($("#txtNumero").val().trim().length != 0) {
+                        if ($("#txtNumero").val().trim().length == 11) {
+                            loadSunatApi($("#txtNumero").val().trim());
+                        }
                     }
                 }
             });
@@ -293,106 +400,108 @@
 
         function eventCuota() {
             $("#mdCuotas").modal("show");
-            countCurrentDate = 0;
-            loadCuotas();
+            if (!stateCuotas) {
+                countCurrentDate = 0;
+                loadCuotas();
+            }
         }
 
         function addCuotas() {
-            countCurrentDate = 1;
-            loadCuotas();
+            if (!stateCuotas) {
+                countCurrentDate = 1;
+                loadCuotas();
+            }
         }
 
-        function loadCuotas() {
-            const data = new FormData();
-            data.append('mes', countCurrentDate);
-            data.append('yearCurrentView', yearCurrentView);
-            data.append('monthCurrentView', monthCurrentView);
-            cuotas = [];
-            $("#tbCuotas").empty();
-            $("#tbCuotas").append(
-                '<tr class="text-center"><td colspan="3"><img src="./images/spiner.gif"/><p>Cargando información...</p></td></tr>'
-            );
+        async function loadCuotas() {
+            try {
+                const data = new FormData();
+                data.append('mes', countCurrentDate);
+                data.append('yearCurrentView', yearCurrentView);
+                data.append('monthCurrentView', monthCurrentView);
+                cuotas = [];
+                stateCuotas = true;
+                $("#tbCuotas").empty();
+                $("#tbCuotas").append(
+                    `<tr class="text-center"><td colspan="3"><img src="{{asset('images/spiner.gif')}}"/><p>Cargando cuotas...</p></td></tr>`
+                );
 
-            fetch("{{ route('service.cuotas')}}", {
+                let result = await tools.fetch_timeout("{{ route('service.cuotas')}}", {
                     headers: {
                         'X-CSRF-TOKEN': window.CSRF_TOKEN
                     },
                     method: 'POST',
                     body: data
-                })
-                .then(function(response) {
-                    if (response.ok) {
-                        return response.json()
-                    } else {
-                        throw "Error de conexión, intente nuevamente.";
-                    }
-                })
-                .then(function(result) {
-                    if (result.estatus == 1) {
-                        $("#tbCuotas").empty();
+                });
 
-                        cuotas = result.data;
-                        if (cuotas.length > 0) {
-                            let totalCuotas = 0;
-                            let idCheck = 1;
-                            for (let value of cuotas) {
-                                let monto = 0;
-                                let lol = '<input id="' + idCheck + '" type="checkbox" checked onclick="selectCheck(' + idCheck + ')">';
-                                for (let c of value.concepto) {
-                                    monto += parseFloat(c.Precio);
-                                }
-                                $("#tbCuotas").append(
-                                    '<tr id="' + (value.mes + "-" + value.year) + '">' +
-                                    '<td style="width:3%">' + lol + '</td>' +
-                                    '<td class="no-padding" style="vertical-align:middle;">' + tools.nombreMes(value.mes) + " - " + value.year + "</td>" +
-                                    '<td class="no-padding text-center" style="vertical-align:middle;">' + tools.formatMoney(monto) + "</td>" +
-                                    +"</tr>"
-                                );
-                                totalCuotas += parseFloat(monto);
-                                idCheck++;
-                            }
-                            $("#lblTotalCuotas").html("TOTAL DE " + cuotas.length + " CUOTAS: " + tools.formatMoney(totalCuotas));
+                if (result.status == 1) {
+                    $("#tbCuotas").empty();
 
-                            if (cuotas.length > 0) {
-                                $("#lblNumeroCuotas").html(
-                                    "CUOTAS DEL: " +
-                                    cuotas[0].mes +
-                                    "/" +
-                                    cuotas[0].year +
-                                    " al " +
-                                    cuotas[cuotas.length - 1].mes +
-                                    "/" +
-                                    cuotas[cuotas.length - 1].year
-                                );
-                                yearCurrentView = cuotas[cuotas.length - 1].year;
-                                monthCurrentView = cuotas[cuotas.length - 1].mes;
+                    cuotas = result.data;
+                    if (cuotas.length > 0) {
+                        let totalCuotas = 0;
+                        let idCheck = 1;
+                        for (let value of cuotas) {
+                            let monto = 0;
+                            let lol = '<input id="' + idCheck + '" type="checkbox" checked onclick="selectCheck(' + idCheck + ')">';
+                            for (let c of value.concepto) {
+                                monto += parseFloat(c.Precio);
                             }
-                        } else {
                             $("#tbCuotas").append(
-                                '<tr class="text-center"><td colspan="3"><img src="./images/ayuda.png" width="80"/><p>Cuotas al Día has click en boton (+Agregar) para más cuotas.</p></td></tr>'
+                                '<tr id="' + (value.mes + "-" + value.year) + '">' +
+                                '<td style="width:3%">' + lol + '</td>' +
+                                '<td class="no-padding" style="vertical-align:middle;">' + tools.nombreMes(value.mes) + " - " + value.year + "</td>" +
+                                '<td class="no-padding text-center" style="vertical-align:middle;">' + tools.formatMoney(monto) + "</td>" +
+                                +"</tr>"
                             );
-                            $("#lblTotalCuotas").html("TOTAL DE 0 CUOTAS: 0.00");
-                            $("#lblNumeroCuotas").html("CUOTAS DEL: 00/0000 al 00/0000");
+                            totalCuotas += parseFloat(monto);
+                            idCheck++;
+                        }
+                        $("#lblTotalCuotas").html("TOTAL DE " + cuotas.length + " CUOTAS: " + tools.formatMoney(totalCuotas));
+
+                        if (cuotas.length > 0) {
+                            $("#lblNumeroCuotas").html(
+                                "CUOTAS DEL: " +
+                                cuotas[0].mes +
+                                "/" +
+                                cuotas[0].year +
+                                " al " +
+                                cuotas[cuotas.length - 1].mes +
+                                "/" +
+                                cuotas[cuotas.length - 1].year
+                            );
+                            yearCurrentView = cuotas[cuotas.length - 1].year;
+                            monthCurrentView = cuotas[cuotas.length - 1].mes;
                         }
                     } else {
-                        $("#tbCuotas").empty();
                         $("#tbCuotas").append(
-                            '<tr class="text-center"><td colspan="3"><p>' +
-                            result.message +
-                            "</p></td></tr>"
+                            `<tr class="text-center"><td colspan="3"><img src="{{asset('images/ayuda.png')}}" width="80"/><p>Cuotas al Día has click en boton (+Agregar) para más cuotas.</p></td></tr>`
                         );
                         $("#lblTotalCuotas").html("TOTAL DE 0 CUOTAS: 0.00");
                         $("#lblNumeroCuotas").html("CUOTAS DEL: 00/0000 al 00/0000");
                     }
-                })
-                .catch(function(error) {
+                    stateCuotas = false;
+                } else {
                     $("#tbCuotas").empty();
                     $("#tbCuotas").append(
-                        '<tr class="text-center"><td colspan="2"><p>' +
-                        error.responseText +
+                        '<tr class="text-center"><td colspan="3"><p>' +
+                        result.message +
                         "</p></td></tr>"
                     );
-                });
+                    $("#lblTotalCuotas").html("TOTAL DE 0 CUOTAS: 0.00");
+                    $("#lblNumeroCuotas").html("CUOTAS DEL: 00/0000 al 00/0000");
+                    stateCuotas = false;
+                }
+
+            } catch (error) {
+                $("#tbCuotas").empty();
+                $("#tbCuotas").append(
+                    '<tr class="text-center"><td colspan="2"><p>' +
+                    error.responseText +
+                    "</p></td></tr>"
+                );
+                stateCuotas = false;
+            }
         }
 
         function eventCloseCuota() {
@@ -465,7 +574,7 @@
                 }
             } else {
                 $("#tbCuotas").append(
-                    '<tr class="text-center"><td colspan="3"><img src="./images/ayuda.png" width="80"/><p>Cuotas al Día has click en boton (+Agregar) para más cuotas.</p></td></tr>'
+                    `<tr class="text-center"><td colspan="3"><img src="{{asset('images/ayuda.png')}}" width="80"/><p>Cuotas al Día has click en boton (+Agregar) para más cuotas.</p></td></tr>`
                 );
                 $("#lblTotalCuotas").html("TOTAL DE 0 CUOTAS: 0.00");
                 $("#lblNumeroCuotas").html("CUOTAS DEL: 00/0000 al 00/0000");
@@ -531,7 +640,7 @@
                     }
                 } else {
                     $("#tbCuotas").append(
-                        '<tr class="text-center"><td colspan="3"><img src="./images/ayuda.png" width="80"/><p>Cuotas al Día has click en boton (+Agregar) para más cuotas.</p></td></tr>'
+                        `<tr class="text-center"><td colspan="3"><img src="{{asset('images/ayuda.png')}}" width="80"/><p>Cuotas al Día has click en boton (+Agregar) para más cuotas.</p></td></tr>`
                     );
                     $("#lblTotalCuotas").html("TOTAL DE 0 CUOTAS: 0.00");
                     $("#lblNumeroCuotas").html("CUOTAS DEL: 00/0000 al 00/0000");
@@ -612,10 +721,11 @@
 
         removeIngresos = function(idConcepto, categoria) {
             for (let i = 0; i < arrayIngresos.length; i++) {
-                if (arrayIngresos[i].categoria == 100) {
+                if (arrayIngresos[i].categoria == 5) {
                     if (arrayIngresos[i].idConcepto === parseInt(idConcepto)) {
                         arrayIngresos.splice(i, 1);
                         i--;
+                        certificadoHabilidadEstado = false;
                         break;
                     }
                 } else {
@@ -628,6 +738,10 @@
                         i--;
                         cuotasEstate = false;
                     } else if (arrayIngresos[i].categoria == categoria && categoria == 3) {
+                        arrayIngresos.splice(i, 1);
+                        i--;
+                        cuotasEstate = false;
+                    } else if (arrayIngresos[i].categoria == categoria && categoria == 12) {
                         arrayIngresos.splice(i, 1);
                         i--;
                         cuotasEstate = false;
@@ -717,42 +831,76 @@
             return ret;
         }
 
-        function loadComprobantes() {
-            $("#cbComprobante").empty();
-            comprobantes = [];
-            fetch("{{ route('service.allComprobantes')}}", {
+        async function loadComprobantes() {
+            try {
+                $("#cbComprobante").empty();
+                comprobantes = [];
+
+                let result = await tools.fetch_timeout("{{ route('service.allComprobantes')}}", {
                     headers: {
                         'X-CSRF-TOKEN': window.CSRF_TOKEN
                     },
                     method: 'POST'
-                })
-                .then(function(response) {
-                    if (response.ok) {
-                        return response.json()
-                    } else {
-                        throw "Error de conexión, intente nuevamente.";
-                    }
-                })
-                .then(function(result) {
-                    if (result.estatus === 1) {
-                        comprobantes = result.data;
-                        $("#cbComprobante").append('<option value="">- Seleccione -</option>');
-                        for (let value of comprobantes) {
-                            $("#cbComprobante").append('<option value="' + value.IdTipoComprobante + '">' + value.Nombre + '</option>')
-                        }
-                        for (let value of comprobantes) {
-                            if (value.Predeterminado == "1") {
-                                $("#cbComprobante").val(value.IdTipoComprobante);
-                                break;
-                            }
-                        }
-                    } else {
-                        $("#cbComprobante").append('<option value="">- Seleccione -</option>');
-                    }
-                })
-                .catch(function(error) {
-                    $("#cbComprobante").append('<option value="">- Seleccione -</option>');
                 });
+
+                if (result.status === 1) {
+                    comprobantes = result.data;
+                    $("#cbComprobante").append('<option value="">- Seleccione -</option>');
+                    for (let value of comprobantes) {
+                        $("#cbComprobante").append('<option value="' + value.IdTipoComprobante + '">' + value.Nombre + '(' + value.Serie + ')</option>')
+                    }
+                    for (let value of comprobantes) {
+                        if (value.Predeterminado == "1") {
+                            $("#cbComprobante").val(value.IdTipoComprobante);
+                            if (value.UsarRuc == "1") {
+                                $("#txtNumero").attr("disabled", false);
+                                $("#txtCliente").attr("disabled", false);
+                                $("#txtDireccion").attr("disabled", false);
+
+                                $("#txtNumero").val('');
+                                $("#txtCliente").val('');
+                                $("#txtDireccion").val('');
+
+                                UsarRuc = true;
+                            } else {
+                                $("#txtNumero").attr("disabled", true);
+                                $("#txtCliente").attr("disabled", true);
+                                $("#txtDireccion").attr("disabled", true);
+
+                                $("#txtNumero").val(documento);
+                                $("#txtCliente").val(cliente);
+                                $("#txtDireccion").val(direccion);
+
+                                UsarRuc = false;
+                            }
+                            break;
+                        }
+                    }
+                } else {
+                    $("#cbComprobante").append('<option value="">- Seleccione -</option>');
+                }
+            } catch (error) {
+                $("#cbComprobante").append('<option value="">- Seleccione -</option>');
+            }
+        }
+
+        async function loadSunatApi(numero) {
+            try {
+                $("#divOverlay").addClass("overlay");
+                $("#divOverlay").empty();
+                $("#divOverlay").append('<i class="fa fa-refresh fa-spin"></i>');
+
+                let result = await tools.fetch_timeout("https://dniruc.apisperu.com/api/v1/ruc/" + numero + "?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImFsZXhhbmRlcl9keF8xMEBob3RtYWlsLmNvbSJ9.6TLycBwcRyW1d-f_hhCoWK1yOWG_HJvXo8b-EoS5MhE");
+
+                $("#txtNumero").val(result.ruc);
+                $("#txtCliente").val(result.razonSocial);
+                $("#txtDireccion").val(result.direccion);
+                $("#divOverlay").empty();
+                $("#divOverlay").removeClass("overlay");
+            } catch (error) {
+                $("#divOverlay").empty();
+                $("#divOverlay").removeClass("overlay");
+            }
         }
 
         // 
@@ -761,11 +909,15 @@
                 tools.AlertWarning("Cobros", "Seleccione un comprobante para continuar.");
             } else if (arrayIngresos.length == 0) {
                 tools.AlertWarning("Cobros", "No hay conceptos para continuar.");
-            } else if (idDNI == 0 && $("#cbEmpresa").val() == "") {
-                tools.AlertWarning("Cobros", "No selecciono ningún ingeneniero o Empresa para continuar.");
-            } else if (UsarRuc && $("#cbEmpresa").val() == '') {
-                tools.AlertWarning("Cobros", "El comprobante requiere usar una empresa asociada.");
-                $("#cbEmpresa").focus();
+            } else if (UsarRuc && $("#txtNumero").val().trim() == '') {
+                tools.AlertWarning("Cobros", "El comprobante requiere usar RUC.");
+                $("#txtNumero").focus();
+            } else if (UsarRuc && $("#txtNumero").val().trim().length !== 11) {
+                tools.AlertWarning("Cobros", "El RUC debe tener 11 caracteres.");
+                $("#txtNumero").focus();
+            } else if (UsarRuc && $("#txtCliente").val().trim() == '') {
+                tools.AlertWarning("Cobros", "El comprobante requiere usar Razón Social.");
+                $("#txtCliente").focus();
             } else {
                 let porcetaje = 4.20 / 100; //0.042
                 let montoAum =
@@ -793,8 +945,8 @@
             }
         }
 
-        function enviarCobro() {
-            if (formSaveCard.elements['card'].value.trim().length == 0) {
+        async function enviarCobro() {
+            if (!Payment.fns.validateCardNumber(J.val(formSaveCard.elements['card']))) {
                 tools.AlertWarning('', 'Ingrese el número de su tarjeta.');
                 formSaveCard.elements['card'].focus();
             } else if (!Payment.fns.validateCardExpiry(Payment.cardExpiryVal(formSaveCard.elements['exp']))) {
@@ -810,10 +962,8 @@
                 let valexp = formSaveCard.elements['exp'].value.trim().replace(/ /g, "");
                 let arrayexp = valexp.split("/");
 
-                tools.ModalDialog("Cobros", "¿Está seguro de continuar?", function(value) {
+                tools.ModalDialog("Cobros", "¿Está seguro de continuar?", async function(value) {
                     if (value == true) {
-                        // cancelarIngreso();
-                        // tools.ModalAlertInfo("Cobros", "Procesando petición..");       
 
                         let porcetaje = 4.20 / 100; //0.042
                         let montoAum =
@@ -828,101 +978,62 @@
                             sumaTotal + 3;
 
                         let igvp = 18;
-                        let comision = montoAum * porcetaje; //4.20
-                        let igv = comision * (igvp / 100); //0.756
+                        let comision = montoAum * porcetaje;
+                        let igv = comision * (igvp / 100);
                         let total = Math.round(montoAum + comision + igv);
 
-                        fetch("{{ route('service.savePay')}}", {
+                        let body = JSON.stringify({
+                            "idTipoDocumento": parseInt($("#cbComprobante").val()),
+                            "empresa": !UsarRuc ? null : {
+                                "numero": $("#txtNumero").val().trim(),
+                                "cliente": $("#txtCliente").val().trim(),
+                                "direccion": $("#txtDireccion").val().trim(),
+                            },
+                            "idUsuario": -1,
+                            "estado": 'C',
+                            "tipo": 3,
+                            "idBanco": 0,
+                            "numOperacion": '',
+                            "descripcion": $("#txtDescripcion").val().trim(),
+                            "estadoCuotas": cuotasEstate,
+                            "estadoCertificadoHabilidad": certificadoHabilidadEstado,
+                            "objectCertificadoHabilidad": certificadoHabilidad,
+                            "ingresos": arrayIngresos,
+                            "cuotasInicio": cuotasInicio,
+                            "cuotasFin": cuotasFin,
+                            "card_number": formSaveCard.elements['card'].value.trim().replace(/ /g, ""),
+                            "cvv": formSaveCard.elements['cvv'].value.trim(),
+                            "expiration_month": arrayexp[0],
+                            "expiration_year": arrayexp[1],
+                            "email": formSaveCard.elements['email'].value.trim(),
+                            "monto": total
+                        });
+
+                        cancelarIngreso();
+
+                        tools.ModalAlertInfo("Cobros", "Procesando petición..");
+
+                        try {
+                            let response = await fetch("{{ route('service.savePay')}}", {
                                 headers: {
                                     'X-CSRF-TOKEN': window.CSRF_TOKEN,
                                     "Content-Type": "application/json"
                                 },
                                 method: 'POST',
-                                body: JSON.stringify({
-                                    "idTipoDocumento": parseInt($("#cbComprobante").val()),
-                                    "idCliente": idDNI == 0 ? 0 : idDNI,
-                                    "idEmpresaPersona": $("#cbEmpresa").val() == '' ? null : $("#cbEmpresa").val(),
-                                    "idUsuario": -1,
-                                    "estado": 'C',
-                                    "tipo": 3,
-                                    "idBanco": 0,
-                                    "numOperacion": '',
-                                    "estadoCuotas": cuotasEstate,
-                                    "ingresos": arrayIngresos,
-                                    "cuotasInicio": cuotasInicio,
-                                    "cuotasFin": cuotasFin,
-                                    "card_number": formSaveCard.elements['card'].value.trim().replace(/ /g, ""),
-                                    "cvv": formSaveCard.elements['cvv'].value.trim(),
-                                    "expiration_month": arrayexp[0],
-                                    "expiration_year": arrayexp[1],
-                                    "email": formSaveCard.elements['email'].value.trim(),
-                                    "monto": total
-                                })
-                            })
-                            .then(function(response) {
-                                if (response.ok) {
-                                    return response.json()
-                                } else {
-                                    throw "Error de conexión, intente nuevamente.";
-                                }
-                            })
-                            .then(function(result) {
-                                console.log(result);
-                                // if (result.estado === 1) {
-
-                                //     $("#btnCertificado").attr('data-toggle', '');
-                                //     $("#btnCertificado").attr('aria-expanded', 'false');
-                                //     loadEmpresaPersona();
-                                //     loadComprobantes();
-
-                                //     tools.ModalAlertSuccess("Cobros", result.mensaje, function() {
-                                //         $("#modalEndIngreso").modal("show");
-                                //         $("#modalFotterEndIngresos").empty();
-                                //         $("#modalFotterEndIngresos").append('' +
-                                //             '<a href="../app/sunat/pdfingresos.php?idIngreso=' + result.idIngreso + '" target="_blank" class="btn btn-success">' +
-                                //             '<i class="fa fa-file-pdf-o"></i> Ingreso' +
-                                //             '</a>');
-
-                                //         if (result.colegiado != null) {
-                                //             $("#modalFotterEndIngresos").append('' +
-                                //                 '<button class="btn btn-info" onclick="getCorreo(\'' + result.colegiado.idDNI + '\', \'' + result.idIngreso + '\', \'' + '\')">' +
-                                //                 '<i class="fa fa-envelope"></i> Correo</br>' +
-                                //                 '</button>');
-                                //         }
-
-                                //         if (result.cerHabilidad == true) {
-                                //             $("#modalFotterEndIngresos").append('' +
-                                //                 '<a href="../app/sunat/pdfCertHabilidad.php?idIngreso=' + result.idIngreso + '" target="_blank" class="btn btn-success">' +
-                                //                 '<i class="fa fa-file-pdf-o"></i> Cert. Habilidad(A)' +
-                                //                 '</a>');
-                                //         }
-                                //         if (result.cerObra == true) {
-                                //             $("#modalFotterEndIngresos").append('' +
-                                //                 '<a href="../app/sunat/pdfCertObra.php?idIngreso=' + result.idIngreso + '" target="_blank" class="btn btn-success">' +
-                                //                 '<i class="fa fa-file-pdf-o"></i> Cert. Obra(B)' +
-                                //                 '</a>');
-                                //         }
-                                //         if (result.cerProyecto == true) {
-                                //             $("#modalFotterEndIngresos").append('' +
-                                //                 '<a href="../app/sunat/pdfCertProyecto.php?idIngreso=' + result.idIngreso + '" target="_blank" class="btn btn-success">' +
-                                //                 '<i class="fa fa-file-pdf-o"></i> Cert. Proyecto(C)' +
-                                //                 '</a>');
-                                //         }
-                                //         $("#modalFotterEndIngresos").append('' +
-                                //             '<button type="button" data-dismiss="modal" class="btn btn-danger">' +
-                                //             '<i class="fa fa-remove"></i> Cerrar</button>');
-                                //     });
-                                // } else {
-                                //     tools.ModalAlertWarning("Cobros", result.mensaje);
-                                // }
-                            })
-                            .catch(function(error) {
-                                console.error(error)
-                                // tools.ModalAlertError("Cobros", "Se produjo un error: " + error.responseText);
+                                body: body
                             });
+                            let result = await response.json();
+                            if (result.status === 1) {
+                                tools.ModalAlertSuccess("Cobros", result.message);
+                            } else {
+                                tools.ModalAlertWarning("Cobros", result.message);
+                            }
+
+                        } catch (error) {
+                            tools.ModalAlertError("Cobros", "Error de conexión del cliente, intente nuevamente en un par de minutos.");
+                        }
                     }
                 });
-
             }
         }
 
@@ -937,25 +1048,168 @@
             arrayIngresos.splice(0, arrayIngresos.length);
             addIngresos();
 
+            $("#modalTipoPago").modal("hide");
+            formSaveCard.elements['card'].value = '';
+            formSaveCard.elements['exp'].value = '';
+            formSaveCard.elements['cvv'].value = '';
+
             newEmpresa = 0;
-            idDNI = 0;
             cuotasEstate = false;
+            certificadoHabilidadEstado = false;
+            certificadoHabilidad = {};
             UsarRuc = false;
             countCurrentDate = 0;
             cuotasInicio = "";
             cuotasFin = "";
 
+            $("#cbComprobante").val('');
+
+            $("#txtNumero").attr("disabled", false);
+            $("#txtCliente").attr("disabled", false);
+            $("#txtDireccion").attr("disabled", false);
+
+            $("#txtNumero").val('');
+            $("#txtCliente").val('');
+            $("#txtDireccion").val('');
+
             for (let i = 0; i < comprobantes.length; i++) {
                 if (comprobantes[i].Predeterminado == "1") {
-                    $("#cbComprobante").val(comprobantes[i].IdTipoComprobante)
+                    $("#cbComprobante").val(comprobantes[i].IdTipoComprobante);
+                    if (comprobantes[i].UsarRuc == "1") {
+                        $("#txtNumero").attr("disabled", false);
+                        $("#txtCliente").attr("disabled", false);
+                        $("#txtDireccion").attr("disabled", false);
+
+                        $("#txtNumero").val('');
+                        $("#txtCliente").val('');
+                        $("#txtDireccion").val('');
+
+                        UsarRuc = true;
+                    } else {
+                        $("#txtNumero").attr("disabled", true);
+                        $("#txtCliente").attr("disabled", true);
+                        $("#txtDireccion").attr("disabled", true);
+
+                        $("#txtNumero").val(documento);
+                        $("#txtCliente").val(cliente);
+                        $("#txtDireccion").val(direccion);
+
+                        UsarRuc = false;
+                    }
+                    break;
                 }
-                if (comprobantes[i].UsarRuc == "1") {
-                    UsarRuc = true;
-                } else {
-                    UsarRuc = false;
-                }
-                break;
             }
+
+        }
+
+        async function loadCertificadoHabilidad() {
+            try {
+                $("#cbEspecialidadCertificado").empty();
+                $("#modal-title-certificado-habilidad").append(`<img src="{{asset('images/spiner.gif')}}" width="25" height="25" style="margin-left: 10px;"/>`);
+
+                $("#lblCertificadoHabilidadEstado").removeClass();
+                $("#lblCertificadoHabilidadEstado").empty();
+                certificadoHabilidad = {}
+
+                let result = await tools.fetch_timeout("{{ route('service.certificado')}}", {
+                    headers: {
+                        'X-CSRF-TOKEN': window.CSRF_TOKEN
+                    },
+                    method: 'POST'
+                });
+
+                $("#modal-title-certificado-habilidad").empty();
+                $("#modal-title-certificado-habilidad").append('<i class="fa fa-plus"> </i> Certificado de Habilidad');
+
+                if (result.status == 1) {
+                    certificadoHabilidad = {
+                        "idConcepto": parseInt(result.data.idConcepto),
+                        "categoria": parseInt(result.data.Categoria),
+                        "cantidad": 1,
+                        "concepto": result.data.Concepto,
+                        "precio": parseFloat(result.data.Precio),
+                        "monto": parseFloat(result.data.Precio)
+                    };
+
+                    $("#cbEspecialidadCertificado").append('<option value="">- Seleccione -</option>');
+                    for (let especialidades of result.especialidades) {
+                        $("#cbEspecialidadCertificado").append('<option value="' + especialidades.idColegiado + '">' + especialidades.Especialidad + '</option>');
+                    }
+
+                    if (result.especialidades.length != 0) {
+                        $("select#cbEspecialidadCertificado").prop('selectedIndex', 1);
+                    }
+
+                    if (result.especialidades.length > 1) {
+                        $("#lblEspecialidadCertificado").html('Especialidad(es) <em class=" text-primary text-bold small"><i class="fa fa-info-circle"></i> Tiene más de 2 especialidades</em>');
+                    }
+
+                    $("#lblCertificadoHabilidadEstado").addClass("text-success");
+                    $("#lblCertificadoHabilidadEstado").append('<i class="fa fa-check"> </i> Se cargo correctamente lo datos.');
+
+
+                } else {
+                    $("#lblCertificadoHabilidadEstado").addClass("text-warning");
+                    $("#lblCertificadoHabilidadEstado").append('<i class="fa fa-check"> </i> ' + result.message);
+                    $("#cbEspecialidadCertificado").append('<option value="">- Seleccione -</option>');
+                }
+            } catch (error) {
+                console.log(error);
+                $("#modal-title-certificado-habilidad").empty();
+                $("#modal-title-certificado-habilidad").append('<i class="fa fa-plus"></i> Certificado de Habilidad');
+                $("#cbEspecialidadCertificado").append('<option value="">- Seleccione -</option>');
+                $("#lblCertificadoHabilidadEstado").addClass("text-danger");
+                $("#lblCertificadoHabilidadEstado").append('<i class="fa fa-check"> </i> ' + error.responseText);
+            }
+        }
+
+        function validateIngresosCertificadoHabilidad() {
+            if ($("#cbEspecialidadCertificado").val() == '') {
+                $("#cbEspecialidadCertificado").focus();
+            } else if ($("#txtAsuntoCertificado").val() == '') {
+                $("#txtAsuntoCertificado").focus();
+            } else if ($("#txtEntidadCertificado").val() == '') {
+                $("#txtEntidadCertificado").focus();
+            } else if ($("#txtLugarCertificado").val() == '') {
+                $("#txtLugarCertificado").focus();
+            } else if ($.isEmptyObject(certificadoHabilidad)) {
+                tools.AlertWarning("Certificado de Habilidad", "No se pudo crear el objeto por error en cargar los datos.")
+            } else {
+                certificadoHabilidad.fechaPago = tools.getCurrentDate();
+                certificadoHabilidad.idEspecialidad = $("#cbEspecialidadCertificado").val();
+                certificadoHabilidad.asunto = $("#txtAsuntoCertificado").val().toUpperCase();
+                certificadoHabilidad.entidad = $("#txtEntidadCertificado").val().toUpperCase();
+                certificadoHabilidad.lugar = $("#txtLugarCertificado").val().toUpperCase();
+                certificadoHabilidad.anulado = 0;
+                validateCertHabilidadNum();
+            }
+        }
+
+        function validateCertHabilidadNum() {
+            if (!validateDuplicate(certificadoHabilidad.idConcepto)) {
+                arrayIngresos.push({
+                    "idConcepto": certificadoHabilidad.idConcepto,
+                    "categoria": certificadoHabilidad.categoria,
+                    "cantidad": certificadoHabilidad.cantidad,
+                    "concepto": certificadoHabilidad.concepto,
+                    "precio": certificadoHabilidad.precio,
+                    "monto": certificadoHabilidad.precio * certificadoHabilidad.cantidad
+                });
+                addIngresos();
+                $('#mdCertHabilidad').modal('hide')
+                certificadoHabilidadEstado = true;
+                clearIngresosCertificadoHabilidad()
+            } else {
+                tools.AlertWarning("Certificado de Habilidad", "Ya existe un concepto con los mismo datos.");
+            }
+        }
+
+        function clearIngresosCertificadoHabilidad() {
+            $("#cbEspecialidadCertificado").val("")
+            $("#lblEspecialidadCertificado").html('Especialidad(es)');
+            $("#txtAsuntoCertificado").val("EJERCICIO DE LA PROFESIÓN")
+            $("#txtEntidadCertificado").val("VARIOS")
+            $("#txtLugarCertificado").val("A NIVEL NACIONAL")
         }
 
     });

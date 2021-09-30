@@ -42,6 +42,17 @@ class AdminController extends Controller
                 $session->idDNI
             ]);
 
+            $cmdImage = DB::selectOne("SELECT TOP 1 
+                Foto
+                FROM PersonaImagen WHERE idDNI = ?", [
+                $session->idDNI
+            ]);
+
+            $image = "";
+            if ($cmdImage != null) {
+                $image = 'data:image/(png|jpg|jpeg|gif);base64,' . base64_encode($cmdImage->Foto);
+            }
+
             $cmdCuota = DB::selectOne("SELECT 
             cast(ISNULL(ul.FechaUltimaCuota, c.FechaColegiado)as date) as UltimoPago     
             from Persona as p inner join Colegiatura as c
@@ -134,7 +145,7 @@ class AdminController extends Controller
                 }
             }
 
-            return view('admin.admin', ["persona" => $persona, "deuda" => $montodeuda]);
+            return view('admin.admin', ["persona" => $persona, "deuda" => $montodeuda, "image" => $image]);
         } else {
             return view('welcome');
         }

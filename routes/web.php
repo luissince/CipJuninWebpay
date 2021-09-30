@@ -25,6 +25,7 @@ Route::post('/identify/save', [IdentifyController::class, 'save'])->name('identi
 
 Route::get('/service', [ServiceController::class, 'index'])->name('service.index');
 Route::post('/service/cuotas', [ServiceController::class, 'cuotas'])->name('service.cuotas');
+Route::post('/service/certificado', [ServiceController::class, 'certificado'])->name('service.certificado');
 Route::post('/service/allComprobantes', [ServiceController::class, 'allComprobantes'])->name('service.allComprobantes');
 Route::post('/service/savePay', [ServiceController::class, 'savePay'])->name('service.savePay');
 

@@ -10,7 +10,7 @@
     <!-- Profile Image -->
     <div class="box box-primary">
       <div class="box-body box-profile">
-        <img class="profile-user-img img-responsive img-circle" src="{{asset('images/usuario.png')}}" alt="User profile picture">
+        <img class="profile-user-img img-responsive img-circle" src="{{$image==''?asset('images/usuario.png'):$image}}" alt="User profile picture">
 
         <h3 class="profile-username text-center"> {{$persona->Apellidos}} {{$persona->Nombres}}</h3>
 
@@ -47,7 +47,7 @@
           <!-- Post -->
           <div class="post">
             <div class="user-block">
-              <img class="img-circle img-bordered-sm" src="{{asset('images/tutores.png')}}" alt="user image">
+              <img class="img-circle img-bordered-sm" src="{{asset('images/insignia.png')}}" alt="user image">
               <span class="username">
                 <a href="#">CIP CD JUNÍN.</a>
                 <a href="#" class="pull-right btn-box-tool"><i class="fa fa-times"></i></a>

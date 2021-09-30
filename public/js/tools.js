@@ -295,5 +295,26 @@ function Tools() {
         toastr["info"](message, title)
     }
 
+    this.fetch_timeout = function (url, header = { method: "GET" }, timeout = 10000) {
+
+        let primiseTime = new Promise(function (_, reject) {
+            setTimeout(reject, timeout, { "state": 0, "message": "Tiempo de espera agotado, intente nuevamente en un par de minutos." })
+        });
+
+        let promiseFetch = new Promise(function (resolve, reject) {
+            fetch(url, header).then((response) => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    return new Error('Formato del json no aceptada.');
+                }
+            }).then((result) => {
+                resolve(result);
+            }).catch(() => {
+                reject({ "state": 0, "message": "Error de conexión del cliente, intente nuevamente en un par de minutos." });
+            })
+        })
+        return Promise.race([primiseTime, promiseFetch]).then(result => result).catch(error => error);
+    }
 
 }

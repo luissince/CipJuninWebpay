@@ -266,31 +266,10 @@ class ServiceController extends Controller
                 throw new Exception('Error en cargar en las espcialidad(es).');
             }
 
-            $cmdUltimoPago = DB::selectOne("SELECT 
-            cast(ISNULL(ul.FechaUltimaCuota, c.FechaColegiado)as date) as UltimoPago     
-            from Persona as p inner join Colegiatura as c
-            on p.idDNI = c.idDNI and c.Principal = 1
-            left outer join ULTIMACuota as ul
-            on p.idDNI = ul.idDNI
-            WHERE p.idDNI = ?", [
-                $session->idDNI
-            ]);
-            $resultPago = $cmdUltimoPago->UltimoPago;
-
-            $date = new DateTime($resultPago);
-            if ($resultIngeniero->Condicion == "V") {
-                $date->modify('+9 month');
-                $date->modify('last day of this month');
-            } else {
-                $date->modify('+3 month');
-                $date->modify('last day of this month');
-            }
-
             return response()->json([
                 "status" => 1,
                 "data" => $resultConcepto,
                 "especialidades" => $arrayEspecialidades,
-                "ultimopago" =>  $date->format('Y-m-d'),
                 "tipoColegiado" => $resultIngeniero->Condicion
             ]);
         } catch (Exception $ex) {
@@ -457,10 +436,10 @@ class ServiceController extends Controller
                         $serie_numeracion[1],
                         $request->idUsuario,
                         $request->estado,
-                        $request->descripcion,
+                        is_null($request->descripcion) ? "" : is_null($request->descripcion),
                         $request->tipo,
                         $request->idBanco,
-                        $request->numOperacion
+                        is_null($request->numOperacion) ? "" : $request->numOperacion
                     ]);
 
                     $idIngreso = DB::getPdo()->lastInsertId();
@@ -502,12 +481,16 @@ class ServiceController extends Controller
                         if ($resultIngeniero->Condicion == "V") {
                             $date->modify('+9 month');
                             $date->modify('last day of this month');
+                        } else if ($resultIngeniero->Condicion == "T") {
+                            $fechaactual = new DateTime('now');
+                            $date =  $fechaactual;
+                            $date->modify('+3 month');
+                            $date->modify('last day of this month');
                         } else {
                             $date->modify('+3 month');
                             $date->modify('last day of this month');
                         }
                         $ultimoPago = $date->format('Y-m-d');
-
 
                         $cmdCorrelativo = DB::selectOne("SELECT * FROM CorrelativoCERT WHERE TipoCert = 1");
                         if ($cmdCorrelativo == null) {

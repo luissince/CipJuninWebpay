@@ -86,7 +86,6 @@
                 <div class="box no-border ">
                     <div class="box-body no-padding">
 
-
                         <div class="row">
                             <div class="col-md-12">
                                 <button id="btnCobrar" class="btn btn-success btn-block">
@@ -941,7 +940,7 @@
                 $("#modalTipoPago").modal("show");
                 $('#modalTipoPago').on('shown.bs.modal', function() {
                     formSaveCard.elements['card'].focus();
-                })
+                });
             }
         }
 
@@ -1104,9 +1103,11 @@
 
         async function loadCertificadoHabilidad() {
             try {
-                $("#cbEspecialidadCertificado").empty();
-                $("#modal-title-certificado-habilidad").append(`<img src="{{asset('images/spiner.gif')}}" width="25" height="25" style="margin-left: 10px;"/>`);
+                $("#idOverlayCertificado").empty();
+                $("#idOverlayCertificado").addClass("overlay");
+                $("#idOverlayCertificado").append('<i class="fa fa-refresh fa-spin"></i>');
 
+                $("#cbEspecialidadCertificado").empty();
                 $("#lblCertificadoHabilidadEstado").removeClass();
                 $("#lblCertificadoHabilidadEstado").empty();
                 certificadoHabilidad = {}
@@ -1117,9 +1118,6 @@
                     },
                     method: 'POST'
                 });
-
-                $("#modal-title-certificado-habilidad").empty();
-                $("#modal-title-certificado-habilidad").append('<i class="fa fa-plus"> </i> Certificado de Habilidad');
 
                 if (result.status == 1) {
                     certificadoHabilidad = {
@@ -1147,19 +1145,23 @@
                     $("#lblCertificadoHabilidadEstado").addClass("text-success");
                     $("#lblCertificadoHabilidadEstado").append('<i class="fa fa-check"> </i> Se cargo correctamente lo datos.');
 
-
+                    $("#idOverlayCertificado").empty();
+                    $("#idOverlayCertificado").removeClass("overlay");
                 } else {
                     $("#lblCertificadoHabilidadEstado").addClass("text-warning");
                     $("#lblCertificadoHabilidadEstado").append('<i class="fa fa-check"> </i> ' + result.message);
                     $("#cbEspecialidadCertificado").append('<option value="">- Seleccione -</option>');
+
+                    $("#idOverlayCertificado").empty();
+                    $("#idOverlayCertificado").removeClass("overlay");
                 }
             } catch (error) {
-                console.log(error);
-                $("#modal-title-certificado-habilidad").empty();
-                $("#modal-title-certificado-habilidad").append('<i class="fa fa-plus"></i> Certificado de Habilidad');
                 $("#cbEspecialidadCertificado").append('<option value="">- Seleccione -</option>');
                 $("#lblCertificadoHabilidadEstado").addClass("text-danger");
                 $("#lblCertificadoHabilidadEstado").append('<i class="fa fa-check"> </i> ' + error.responseText);
+
+                $("#idOverlayCertificado").empty();
+                $("#idOverlayCertificado").removeClass("overlay");
             }
         }
 

@@ -62,7 +62,7 @@
             }
         });
 
-        function onEventSubmitValid() {
+        async function onEventSubmitValid() {
             if (isProccess) return;
 
             if (form.elements['cip'].value.trim().length == 0) {
@@ -72,34 +72,28 @@
                 tools.AlertWarning('', 'Ingrese su contraseña por favor.');
                 form.elements['password'].focus();
             } else {
-                tools.ModalAlertInfo('Login', 'Procesando petición...');
-                isProccess = true;
-                const data = new FormData(form);
-                fetch("{{ route('login.valid') }}", {
+                try {
+                    tools.ModalAlertInfo('Login', 'Procesando petición...');
+                    isProccess = true;
+                    const data = new FormData(form);
+
+                    let result = await tools.fetch_timeout("{{ route('login.valid') }}", {
                         method: 'POST',
                         body: data
-                    })
-                    .then(function(response) {
-                        if (response.ok) {
-                            return response.json()
-                        } else {
-                            throw "Error de conexión, intente nuevamente.";
-                        }
-                    })
-                    .then(function(result) {
-                        if (result.status === 1) {
-                            window.location.href = "{{ route('index') }}";
-                        } else {
-                            tools.ModalAlertWarning('Login', result.message, function() {
-                                form.elements['cip'].focus();
-                            });
-                            isProccess = false;
-                        }
-                    })
-                    .catch(function(error) {
-                        tools.ModalAlertError('Login', error.message);
-                        isProccess = false;
                     });
+
+                    if (result.status === 1) {
+                        window.location.href = "{{ route('index') }}";
+                    } else {
+                        tools.ModalAlertWarning('Login', result.message, function() {
+                            form.elements['cip'].focus();
+                        });
+                        isProccess = false;
+                    }
+                } catch (error) {
+                    tools.ModalAlertError('Login', error.message);
+                    isProccess = false;
+                }
             }
         }
     });

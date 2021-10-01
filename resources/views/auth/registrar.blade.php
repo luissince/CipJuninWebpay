@@ -73,7 +73,7 @@
             }
         });
 
-        function onEventSubmitRegister() {
+        async function onEventSubmitRegister() {
             if (isProccess) return;
 
             if (form.elements['dni'].value.trim().length == 0) {
@@ -83,26 +83,21 @@
                 tools.AlertWarning('', 'Ingrese su n° del cip.');
                 form.elements['cip'].focus();
             } else {
-                tools.ModalAlertInfo('Registrar', 'Procesando petición...');
-                isProccess = true;
-                const data = new FormData(form);
-                fetch("{{ route('register.valid')}}", {
+                try {
+                    tools.ModalAlertInfo('Registrar', 'Procesando petición...');
+                    isProccess = true;
+                    const data = new FormData(form);
+
+                    let result = await tools.fetch_timeout("{{ route('register.valid')}}", {
                         method: 'POST',
                         body: data
-                    })
-                    .then(function(response) {
-                        if (response.ok) {
-                            return response.json()
-                        } else {
-                            throw "Error de conexión, intente nuevamente.";
-                        }
-                    })
-                    .then(function(result) {
-                        if (result.status == 1) {
-                            $("#formPrimer").remove();
-                            tools.ModalAlertSuccess('Procesando', "Sus datos se validaron correctamente.", function() {
-                                $("#formSegundo").empty();
-                                $("#formSegundo").append(`
+                    });
+
+                    if (result.status == 1) {
+                        $("#formPrimer").remove();
+                        tools.ModalAlertSuccess('Procesando', "Sus datos se validaron correctamente.", function() {
+                            $("#formSegundo").empty();
+                            $("#formSegundo").append(`
                                     <p class="login-box-msg">Guardar contraseña.</p>
                                     <div class="no-padding" id="no-padding">
                                     </div>
@@ -124,26 +119,30 @@
                                         </div>
                                     </form>
                                 `);
-                                let frmPassword = document.getElementById('frmPassword');
-                                frmPassword.elements['password'].focus();
+                            let frmPassword = document.getElementById('frmPassword');
+                            frmPassword.elements['password'].focus();
 
-                                frmPassword.elements['button'].addEventListener('click', function(event) {
-                                    onEventSubmitPassword(frmPassword, result.user.idDNI);
-                                });
-
-                                frmPassword.addEventListener('keydown', function(event) {
-                                    if (event.keyCode == 13) {
-                                        onEventSubmitPassword(frmPassword, result.user.idDNI);
-                                        event.preventDefault();
-                                    }
-
-                                });
-
+                            frmPassword.elements['button'].addEventListener('click', async function(event) {
+                                onEventSubmitPassword(frmPassword, result.user.idDNI);
                             });
-                            isProccess = false;
-                        } else {
-                            $("#no-padding").empty();
-                            $("#no-padding").append(`<div class="alert alert-warning alert-dismissible">
+
+                            frmPassword.addEventListener('keydown', async function(event) {
+                                if (event.keyCode == 13) {
+                                    onEventSubmitPassword(frmPassword, result.user.idDNI);
+                                    event.preventDefault();
+                                }
+                            });
+
+                        });
+                        isProccess = false;
+                    } else if (result.status == 2) {
+                        tools.ModalAlertWarning('Registrar', result.message, function() {
+                            form.elements['dni'].focus();
+                        });
+                        isProccess = false;
+                    } else {
+                        $("#no-padding").empty();
+                        $("#no-padding").append(`<div class="alert alert-warning alert-dismissible">
                                 <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
                                 <h4><i class="icon fa fa-warning"></i> Alerta!</h4>
                                 Los datos ingresados no coinciden con nuestra información interna, comuníquese con el área de sistemas para corroborar su n° dni o cip.
@@ -155,20 +154,19 @@
                                     </ul>
                                 </div>
                             </div>`);
-                            tools.ModalAlertWarning('Registrar', result.message, function() {
-                                form.elements['dni'].focus();
-                            });
-                            isProccess = false;
-                        }
-                    })
-                    .catch(function(error) {
-                        tools.ModalAlertError('Registrar', "Se produjo un error interno, intente nuevamente en par de minutos.");
+                        tools.ModalAlertWarning('Registrar', result.message, function() {
+                            form.elements['dni'].focus();
+                        });
                         isProccess = false;
-                    });
+                    }
+                } catch (error) {
+                    tools.ModalAlertError('Registrar', "Se produjo un error interno, intente nuevamente en par de minutos.");
+                    isProccess = false;
+                }
             }
         }
 
-        function onEventSubmitPassword(frmPassword, idDNI) {
+        async function onEventSubmitPassword(frmPassword, idDNI) {
             if (frmPassword.elements['password'].value.trim().length == 0) {
                 tools.AlertWarning('', 'Ingrese una contraseña.');
                 frmPassword.elements['password'].focus();
@@ -176,34 +174,31 @@
                 tools.AlertWarning('', 'Ingrese su correo electrónico.');
                 frmPassword.elements['email'].focus();
             } else {
-                const data = new FormData(frmPassword);
-                data.append("idDNI", idDNI);
+                try {
+                    const data = new FormData(frmPassword);
+                    data.append("idDNI", idDNI);
 
-                tools.ModalAlertInfo('Guardando', 'Procesando petición...');
-                fetch("{{ route('register.save')}}", {
+                    tools.ModalAlertInfo('Guardando', 'Procesando petición...');
+
+                    let result = await tools.fetch_timeout("{{ route('register.save')}}", {
                         method: 'POST',
                         body: data
-                    })
-                    .then(function(response) {
-                        if (response.ok) {
-                            return response.json()
-                        } else {
-                            throw "Error de conexión, intente nuevamente.";
-                        }
-                    })
-                    .then(function(result) {
-                        if (result.status == 1) {
-                            tools.ModalAlertSuccess('Guardando', result.message, function() {
-                                window.location.href = "{{ route('login.logout') }}";
-                            });
-                        } else {
-                            tools.ModalAlertWarning('Login', result.message);
-                        }
-                    })
-                    .catch(function(error) {
-                        tools.ModalAlertError('Guardando', "Se produjo un error interno, intente nuevamente en par de minutos.");
-                        isProccess = false;
                     });
+
+                    if (result.status == 1) {
+                        tools.ModalAlertSuccess('Guardando', result.message, function() {
+                            window.location.href = "{{ route('login.logout') }}";
+                        });
+                        isProccess = false;
+                    } else {
+                        tools.ModalAlertWarning('Login', result.message);
+                        isProccess = false;
+                    }
+
+                } catch (error) {
+                    tools.ModalAlertError('Guardando', "Se produjo un error interno, intente nuevamente en par de minutos.");
+                    isProccess = false;
+                }
             }
         }
     });

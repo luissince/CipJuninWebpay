@@ -62,31 +62,26 @@
             }
         });
 
-        function onEventSubmitValid() {
+        async function onEventSubmitValid() {
             if (isProccess) return;
             if (formValid.elements['cip'].value.trim().length == 0) {
                 tools.AlertWarning('', 'Ingrese su n° cip.');
                 formValid.elements['cip'].focus();
             } else {
-                tools.ModalAlertInfo('Validando', 'Procesando petición...');
-                isProccess = true;
-                const data = new FormData(formValid);
-                fetch("{{ route('identify.valid') }}", {
+                try {
+                    tools.ModalAlertInfo('Validando', 'Procesando petición...');
+                    isProccess = true;
+                    const data = new FormData(formValid);
+
+                    let result = await tools.fetch_timeout("{{ route('identify.valid') }}", {
                         method: 'POST',
                         body: data
-                    })
-                    .then(function(response) {
-                        if (response.ok) {
-                            return response.json()
-                        } else {
-                            throw "Error de conexión, intente nuevamente.";
-                        }
-                    })
-                    .then(function(result) {
-                        if (result.status === 1) {
-                            tools.ModalAlertSuccess('Validando', result.message, function() {
-                                $("#formPrimer").remove();
-                                $("#formSegundo").append(`
+                    });
+
+                    if (result.status === 1) {
+                        tools.ModalAlertSuccess('Validando', result.message, function() {
+                            $("#formPrimer").remove();
+                            $("#formSegundo").append(`
                                 <form id="frmCode" method="POST">
                                     @csrf
                                     <div class="form-group">
@@ -99,73 +94,67 @@
                                     </div>
                                 </form>
                                 `);
-                                let frmCode = document.getElementById('frmCode');
-                                frmCode.elements['code'].focus();
-                                frmCode.elements['code'].addEventListener('keypress', function() {
-                                    var key = window.Event ? event.which : event.keyCode;
-                                    var c = String.fromCharCode(key);
-                                    if ((c < '0' || c > '9') && (c != '\b')) {
-                                        event.preventDefault();
-                                    }
-                                });
+                            let frmCode = document.getElementById('frmCode');
+                            frmCode.elements['code'].focus();
+                            frmCode.elements['code'].addEventListener('keypress', function() {
+                                var key = window.Event ? event.which : event.keyCode;
+                                var c = String.fromCharCode(key);
+                                if ((c < '0' || c > '9') && (c != '\b')) {
+                                    event.preventDefault();
+                                }
+                            });
 
-                                frmCode.elements['button'].addEventListener('click', function(event) {
+                            frmCode.elements['button'].addEventListener('click', async function(event) {
+                                onEventSubmitCode(frmCode, result.token, result.user.idDNI);
+                            });
+
+                            frmCode.addEventListener('keydown', async function(event) {
+                                if (event.keyCode == 13) {
                                     onEventSubmitCode(frmCode, result.token, result.user.idDNI);
-                                });
+                                    event.preventDefault();
+                                }
+                            });
 
-                                frmCode.addEventListener('keydown', function(event) {
-                                    if (event.keyCode == 13) {
-                                        onEventSubmitCode(frmCode, result.token, result.user.idDNI);
-                                        event.preventDefault();
-                                    }
-                                });
-
-                            });
-                            isProccess = false;
-                        } else if (result.status === 2) {
-                            tools.ModalAlertWarning('Validando', result.message, function() {
-                                window.location.href = "{{ route('register.index') }}";
-                            });
-                            isProccess = false;
-                        } else {
-                            tools.ModalAlertWarning('Validando', result.message, function() {
-                                formValid.elements['cip'].focus();
-                            });
-                            isProccess = false;
-                        }
-                    })
-                    .catch(function(error) {
-                        tools.ModalAlertError('Validando', error.message);
+                        });
                         isProccess = false;
-                    });
+                    } else if (result.status === 2) {
+                        tools.ModalAlertWarning('Validando', result.message, function() {
+                            window.location.href = "{{ route('register.index') }}";
+                        });
+                        isProccess = false;
+                    } else {
+                        tools.ModalAlertWarning('Validando', result.message, function() {
+                            formValid.elements['cip'].focus();
+                        });
+                        isProccess = false;
+                    }
+
+                } catch (error) {
+                    tools.ModalAlertError('Validando', error.message);
+                    isProccess = false;
+                }
             }
         }
 
-        function onEventSubmitCode(frmCode, token, idDNI) {
+        async function onEventSubmitCode(frmCode, token, idDNI) {
             if (frmCode.elements['code'].value.trim().length == 0) {
                 tools.AlertWarning('', 'Ingrese el código de verificación.');
                 frmCode.elements['code'].focus();
             } else {
-                const data = new FormData(frmCode);
-                data.append('idToken', token);
-                tools.ModalAlertInfo('Validando', 'Procesando petición...');
+                try {
+                    const data = new FormData(frmCode);
+                    data.append('idToken', token);
+                    tools.ModalAlertInfo('Validando', 'Procesando petición...');
 
-                fetch("{{ route('identify.code') }}", {
+                    let result = await tools.fetch_timeout("{{ route('identify.code') }}", {
                         method: 'POST',
                         body: data
-                    })
-                    .then(function(response) {
-                        if (response.ok) {
-                            return response.json()
-                        } else {
-                            throw "Error de conexión, intente nuevamente.";
-                        }
-                    })
-                    .then(function(result) {
-                        if (result.status == 1) {
-                            tools.ModalAlertSuccess('Validando', result.message, function() {
-                                $("#formSegundo").remove();
-                                $("#formTercero").append(`
+                    });
+
+                    if (result.status == 1) {
+                        tools.ModalAlertSuccess('Validando', result.message, function() {
+                            $("#formSegundo").remove();
+                            $("#formTercero").append(`
                                 <form id="frmSave" method="POST">
                                     @csrf
                                     <div class="form-group">
@@ -178,66 +167,58 @@
                                     </div>
                                 </form>
                                 `);
-                                let frmSave = document.getElementById('frmSave');
-                                frmSave.elements['password'].focus();
+                            let frmSave = document.getElementById('frmSave');
+                            frmSave.elements['password'].focus();
 
-                                frmSave.elements['button'].addEventListener('click', function(event) {
+                            frmSave.elements['button'].addEventListener('click', async function(event) {
+                                onEventSubmitPassword(frmSave, idDNI);
+                            });
+
+                            frmSave.addEventListener('keydown', async function(event) {
+                                if (event.keyCode == 13) {
                                     onEventSubmitPassword(frmSave, idDNI);
-                                });
-
-                                frmSave.addEventListener('keydown', function(event) {
-                                    if (event.keyCode == 13) {
-                                        onEventSubmitPassword(frmSave, idDNI);
-                                        event.preventDefault();
-                                    }
-                                });
+                                    event.preventDefault();
+                                }
                             });
-                        } else {
-                            tools.ModalAlertWarning('Validando', result.message, function() {
-                                frmCode.elements['code'].focus();
-                            });
-                        }
-                    })
-                    .catch(function(error) {
-                        tools.ModalAlertError('Validando', error.message);
-                    });
+                        });
+                    } else {
+                        tools.ModalAlertWarning('Validando', result.message, function() {
+                            frmCode.elements['code'].focus();
+                        });
+                    }
+                } catch (error) {
+                    tools.ModalAlertError('Validando', error.message);
+                }
             }
         }
 
-        function onEventSubmitPassword(frmSave, idDNI) {
+        async function onEventSubmitPassword(frmSave, idDNI) {
             if (frmSave.elements['password'].value.trim().length == 0) {
                 tools.AlertWarning('', 'Ingrese su nueva contraseña.');
                 frmSave.elements['password'].focus();
             } else {
-                const data = new FormData(frmSave);
-                data.append('idDNI', idDNI);
-                tools.ModalAlertInfo('Guardando', 'Procesando petición...');
+                try {
+                    const data = new FormData(frmSave);
+                    data.append('idDNI', idDNI);
+                    tools.ModalAlertInfo('Guardando', 'Procesando petición...');
 
-                fetch("{{ route('identify.save') }}", {
+                    let result = await tools.fetch_timeout("{{ route('identify.save') }}", {
                         method: 'POST',
                         body: data
-                    })
-                    .then(function(response) {
-                        if (response.ok) {
-                            return response.json()
-                        } else {
-                            throw "Error de conexión, intente nuevamente.";
-                        }
-                    })
-                    .then(function(result) {
-                        if (result.status == 1) {
-                            tools.ModalAlertSuccess('Guardando', result.message, function() {
-                                window.location.href = "{{ route('login.index') }}";
-                            });
-                        } else {
-                            tools.ModalAlertWarning('Guardando', result.message, function() {
-                                frmSave.elements['password'].focus();
-                            });
-                        }
-                    })
-                    .catch(function(error) {
-                        tools.ModalAlertError('Guardando', error.message);
                     });
+
+                    if (result.status == 1) {
+                        tools.ModalAlertSuccess('Guardando', result.message, function() {
+                            window.location.href = "{{ route('login.index') }}";
+                        });
+                    } else {
+                        tools.ModalAlertWarning('Guardando', result.message, function() {
+                            frmSave.elements['password'].focus();
+                        });
+                    }
+                } catch (error) {
+                    tools.ModalAlertError('Guardando', error.message);
+                }
             }
         }
 

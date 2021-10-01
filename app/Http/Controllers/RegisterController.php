@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use PDOException;
 
 class RegisterController extends Controller
 {
@@ -26,10 +27,17 @@ class RegisterController extends Controller
             $request->cip,
         ]);
         if ($user !== null) {
-            return response()->json([
-                'status' => 1,
-                'user' => $user,
-            ]);
+            if ($user->Clave !== null) {
+                return response()->json([
+                    'status' => 2,
+                    'message' => "Usted ya tiene una cuenta registrar, restablezca su cuenta para obtener una nueva."
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 1,
+                    'user' => $user,
+                ]);
+            }
         } else {
             return response()->json([
                 'status' => 0,
@@ -61,7 +69,7 @@ class RegisterController extends Controller
                 'status' => 1,
                 'message' => "Se guardo correctamente su contraseña, ahora puede ingresar al sistema usando su n° cip y su clave.",
             ]);
-        } catch (\PDOException $e) {
+        } catch (PDOException $e) {
             DB::rollBack();
             return response()->json([
                 'status' => 0,

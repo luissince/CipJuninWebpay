@@ -32,7 +32,7 @@
                 </div>
                 <div class="box-body">
                     <blockquote>
-                        <p>En esta sección podra consultar sus certificados de habilidad.</p>
+                        <p>En esta sección podrá consultar sus certificados de habilidad.</p>
                         <small><i class="fa fa-hand-pointer-o"></i></small>
                     </blockquote>
                 </div>
@@ -49,7 +49,7 @@
                 </div>
                 <div class="box-body">
                     <blockquote>
-                        <p>En esta sección podra consultar sus certificados de obra pública.</p>
+                        <p>En esta sección podrá consultar sus certificados de obra pública.</p>
                         <small><i class="fa fa-hand-pointer-o"></i></small>
                     </blockquote>
                 </div>
@@ -66,7 +66,7 @@
                 </div>
                 <div class="box-body">
                     <blockquote>
-                        <p>En esta sección podra consultar sus certificados de obra proyecto.</p>
+                        <p>En esta sección podrá consultar sus certificados de obra proyecto.</p>
                         <small><i class="fa fa-hand-pointer-o"></i></small>
                     </blockquote>
                 </div>

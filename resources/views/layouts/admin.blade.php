@@ -94,6 +94,7 @@
                                         <p>
                                             {{$persona->Apellidos}} {{$persona->Nombres}}
                                             <small>{{$persona->Especialidad}}</small>
+                                            <small> N° CIP: {{$persona->CIP}}</small>
                                         </p>
                                     </li>
                                     <!-- Menu Footer-->

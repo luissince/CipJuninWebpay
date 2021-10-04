@@ -57,7 +57,20 @@ class ServiceController extends Controller
                 $ubicacion = $direccion->Direccion;
             }
 
-            return view('admin.service', ["persona" => $persona, "email" => $email, "direccion" => $ubicacion]);
+            $dolar = 0;
+
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, 'https://api.apis.net.pe/v1/tipo-cambio-sunat');
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_HEADER, 0);
+            $response = curl_exec($ch);
+            $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            curl_close($ch);
+            if ($http_code == 200) {
+                $tipoCambioSunat = json_decode($response);
+                $dolar =  $tipoCambioSunat->venta;
+            }
+            return view('admin.service', ["persona" => $persona, "email" => $email, "direccion" => $ubicacion, "dolar" => $dolar]);
         } else {
             return view('welcome');
         }
@@ -413,21 +426,21 @@ class ServiceController extends Controller
                             }
 
                             DB::insert("INSERT INTO Ingreso(
-                            idDni,
-                            idEmpresaPersona,
-                            TipoComprobante,
-                            Serie,
-                            NumRecibo,
-                            Fecha,
-                            Hora,
-                            idUsuario,
-                            Estado,
-                            Deposito,
-                            Observacion,
-                            Tipo,
-                            idBanco,
-                            NumOperacion
-                            )VALUES(?,?,?,?,?,GETDATE(),GETDATE(),?,?,0,?,?,?,?)", [
+                                idDni,
+                                idEmpresaPersona,
+                                TipoComprobante,
+                                Serie,
+                                NumRecibo,
+                                Fecha,
+                                Hora,
+                                idUsuario,
+                                Estado,
+                                Deposito,
+                                Observacion,
+                                Tipo,
+                                idBanco,
+                                NumOperacion
+                                )VALUES(?,?,?,?,?,GETDATE(),GETDATE(),?,?,0,?,?,?,?)", [
                                 $session->idDNI,
                                 $idEmpresa,
                                 $request->idTipoDocumento,
@@ -457,12 +470,12 @@ class ServiceController extends Controller
                                     $resultPago = $request->cuotasFin;
                                 } else {
                                     $cmdUltimoPago = DB::selectOne("SELECT 
-                            cast(ISNULL(ul.FechaUltimaCuota, c.FechaColegiado)as date) as UltimoPago     
-                            from Persona as p inner join Colegiatura as c
-                            on p.idDNI = c.idDNI and c.Principal = 1
-                            left outer join ULTIMACuota as ul
-                            on p.idDNI = ul.idDNI
-                            WHERE p.idDNI = ?", [
+                                    CAST(ISNULL(ul.FechaUltimaCuota, c.FechaColegiado) AS DATE) AS UltimoPago     
+                                    FROM Persona AS p INNER JOIN Colegiatura AS c
+                                    ON p.idDNI = c.idDNI AND c.Principal = 1
+                                    LEFT OUTER JOIN ULTIMACuota AS ul
+                                    ON p.idDNI = ul.idDNI
+                                    WHERE p.idDNI = ?", [
                                         $session->idDNI
                                     ]);
                                     if ($cmdUltimoPago == null) {
@@ -555,7 +568,6 @@ class ServiceController extends Controller
                         ]);
                     }
                 } else {
-                    $result = (object)json_decode($resp);
                     return response()->json([
                         "status" => 0,
                         "message" => "Error al crear el token id, intente nuevamente porfavor."

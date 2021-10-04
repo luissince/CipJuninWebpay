@@ -180,6 +180,7 @@
         //ingresos totales
         let arrayIngresos = [];
         let sumaTotal = 0;
+        let dolar = "{{$dolar}}";
 
         let J = Payment.J;
         let formSaveCard = document.getElementById('formSaveCard');
@@ -709,7 +710,6 @@
                             }
 
                         }
-
                     }
                 }
             }
@@ -920,33 +920,58 @@
             if ($("#cbComprobante").val() == '') {
                 tools.AlertWarning("Cobros", "Seleccione un comprobante para continuar.");
             } else if (arrayIngresos.length == 0) {
-                tools.AlertWarning("Cobros", "No hay conceptos para continuar.");
+                tools.AlertWarning("", "No hay conceptos para continuar.");
             } else if (UsarRuc && $("#txtNumero").val().trim() == '') {
-                tools.AlertWarning("Cobros", "El comprobante requiere usar RUC.");
+                tools.AlertWarning("", "El comprobante requiere usar RUC.");
                 $("#txtNumero").focus();
             } else if (UsarRuc && $("#txtNumero").val().trim().length !== 11) {
-                tools.AlertWarning("Cobros", "El RUC debe tener 11 caracteres.");
+                tools.AlertWarning("", "El RUC debe tener 11 caracteres.");
                 $("#txtNumero").focus();
             } else if (UsarRuc && $("#txtCliente").val().trim() == '') {
-                tools.AlertWarning("Cobros", "El comprobante requiere usar Razón Social.");
+                tools.AlertWarning("", "El comprobante requiere usar Razón Social.");
                 $("#txtCliente").focus();
+            } else if (dolar <= 0) {
+                tools.AlertWarning("", "No se puede continuar con el proceso por el tipo de cambio del dolar, intente nuevamente en un par de minutos.");
             } else {
-                let porcetaje = 4.20 / 100; //0.042
+                let montoTotal = sumaTotal;
+
                 let montoAum =
-                    sumaTotal > 0 && sumaTotal <= 50 ?
-                    sumaTotal + 0.7 :
-                    sumaTotal > 50 && sumaTotal <= 100 ?
-                    sumaTotal + 1.20 :
-                    sumaTotal > 100 && sumaTotal <= 500 ?
-                    sumaTotal + 1.70 :
-                    sumaTotal > 500 && sumaTotal <= 1000 ?
-                    sumaTotal + 2.20 :
-                    sumaTotal + 3.70;
+                    montoTotal > 0 && montoTotal <= 50 ?
+                    0.75 :
+                    montoTotal > 50 && montoTotal <= 100 ?
+                    1.25 :
+                    montoTotal > 100 && montoTotal <= 200 ?
+                    1.75 :
+                    montoTotal > 200 && montoTotal <= 400 ?
+                    2.25 :
+                    montoTotal > 400 && montoTotal <= 600 ?
+                    2.75 :
+                    montoTotal > 600 && montoTotal <= 800 ?
+                    3.25 :
+                    montoTotal > 800 && montoTotal <= 1000 ?
+                    3.75 :
+                    montoTotal > 1000 && montoTotal <= 1200 ?
+                    4.25 :
+                    montoTotal > 1200 && montoTotal <= 1400 ?
+                    4.75 :
+                    montoTotal > 1400 && montoTotal <= 1600 ?
+                    5.25 :
+                    montoTotal > 1600 && montoTotal <= 1800 ?
+                    5.75 :
+                    montoTotal > 1800 && montoTotal <= 2000 ?
+                    6.25 :
+                    montoTotal > 2000 && montoTotal <= 2200 ?
+                    6.75 :
+                    0;
 
                 let igvp = 18;
-                let comision = montoAum * porcetaje; //4.20
-                let igv = comision * (igvp / 100); //0.756
-                let total = Math.round(montoAum + comision + igv);
+                let comision_varible = 4.20;
+                let comision_fija = 0.30;
+
+                let monto_depositar = montoTotal - ((((montoTotal * (comision_varible / 100)) + (comision_fija * dolar)) * (igvp / 100)) + ((montoTotal * (comision_varible / 100)) + (comision_fija * dolar)));
+                let monto_cobrar = montoTotal + ((montoTotal - monto_depositar) + montoAum);
+
+                let total = Math.round(monto_cobrar);
 
                 $("#totalModal").html('S/ ' + tools.formatMoney(total));
 
@@ -970,6 +995,8 @@
             } else if (!tools.validateEmail(formSaveCard.elements['email'].value.trim())) {
                 tools.AlertWarning('', 'Ingrese su correo electrónico.');
                 formSaveCard.elements['email'].focus();
+            } else if (dolar <= 0) {
+                tools.AlertWarning("", "No se puede continuar con el proceso por el tipo de cambio del dolar, intente nuevamente en un par de minutos.");
             } else {
                 let valexp = formSaveCard.elements['exp'].value.trim().replace(/ /g, "");
                 let arrayexp = valexp.split("/");
@@ -977,22 +1004,45 @@
                 tools.ModalDialog("Cobros", "¿Está seguro de continuar?", async function(value) {
                     if (value == true) {
 
-                        let porcetaje = 4.20 / 100; //0.042
+                        let montoTotal = sumaTotal;
+
                         let montoAum =
-                            sumaTotal > 0 && sumaTotal <= 50 ?
-                            sumaTotal + 0.7 :
-                            sumaTotal > 50 && sumaTotal <= 100 ?
-                            sumaTotal + 1.20 :
-                            sumaTotal > 100 && sumaTotal <= 500 ?
-                            sumaTotal + 1.70 :
-                            sumaTotal > 500 && sumaTotal <= 1000 ?
-                            sumaTotal + 2.20 :
-                            sumaTotal + 3.70;
+                            montoTotal > 0 && montoTotal <= 50 ?
+                            0.75 :
+                            montoTotal > 50 && montoTotal <= 100 ?
+                            1.25 :
+                            montoTotal > 100 && montoTotal <= 200 ?
+                            1.75 :
+                            montoTotal > 200 && montoTotal <= 400 ?
+                            2.25 :
+                            montoTotal > 400 && montoTotal <= 600 ?
+                            2.75 :
+                            montoTotal > 600 && montoTotal <= 800 ?
+                            3.25 :
+                            montoTotal > 800 && montoTotal <= 1000 ?
+                            3.75 :
+                            montoTotal > 1000 && montoTotal <= 1200 ?
+                            4.25 :
+                            montoTotal > 1200 && montoTotal <= 1400 ?
+                            4.75 :
+                            montoTotal > 1400 && montoTotal <= 1600 ?
+                            5.25 :
+                            montoTotal > 1600 && montoTotal <= 1800 ?
+                            5.75 :
+                            montoTotal > 1800 && montoTotal <= 2000 ?
+                            6.25 :
+                            montoTotal > 2000 && montoTotal <= 2200 ?
+                            6.75 :
+                            0;
 
                         let igvp = 18;
-                        let comision = montoAum * porcetaje;
-                        let igv = comision * (igvp / 100);
-                        let total = Math.round(montoAum + comision + igv);
+                        let comision_varible = 4.20;
+                        let comision_fija = 0.30;
+
+                        let monto_depositar = montoTotal - ((((montoTotal * (comision_varible / 100)) + (comision_fija * dolar)) * (igvp / 100)) + ((montoTotal * (comision_varible / 100)) + (comision_fija * dolar)));
+                        let monto_cobrar = montoTotal + ((montoTotal - monto_depositar) + montoAum);
+
+                        let total = Math.round(monto_cobrar);
 
                         let body = JSON.stringify({
                             "idTipoDocumento": parseInt($("#cbComprobante").val()),

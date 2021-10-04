@@ -11,11 +11,11 @@
                 <div class="box-header with-border">
                     <i class="fa  fa-file"></i>
 
-                    <h3 class="box-title">BOLETAS/FACTURAS</h3>
+                    <h3 class="box-title">BOLETAS / FACTURAS</h3>
                 </div>
                 <div class="box-body">
                     <blockquote>
-                        <p>En esta sección podra consultar sus comprobante de pago.</p>
+                        <p>En esta sección podrá consultar sus comprobantes de pago.</p>
                         <small><i class="fa fa-hand-pointer-o"></i></small>
                     </blockquote>
                 </div>

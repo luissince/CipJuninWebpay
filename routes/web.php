@@ -7,6 +7,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\IdentifyController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\VoucherController;
+use App\Http\Controllers\ProfileController;
 
 Route::get('/', [AdminController::class, 'index'])->name('index');
 
@@ -38,3 +39,6 @@ Route::post('/voucher/invoiceall', [VoucherController::class, 'invoiceall'])->na
 Route::post('/voucher/certhabilidadall', [VoucherController::class, 'certhabilidadall'])->name('voucher.certhabilidadall');
 // Route::post('/voucher/certobraall', [VoucherController::class, 'invoice'])->name('voucher.certobraall');
 // Route::post('/voucher/certproyectoall', [VoucherController::class, 'invoice'])->name('voucher.certproyectoall');
+
+Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
+Route::post('/profile/update', [ProfileController::class, 'update'])->name('profile.update');

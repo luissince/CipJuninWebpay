@@ -93,14 +93,13 @@
                                         <img src="{{asset('images/usuario.png')}}" class="img-circle" alt="User Image">
                                         <p>
                                             {{$persona->Apellidos}} {{$persona->Nombres}}
-                                            <small>{{$persona->Especialidad}}</small>
                                             <small> N° CIP: {{$persona->CIP}}</small>
                                         </p>
                                     </li>
                                     <!-- Menu Footer-->
                                     <li class="user-footer">
                                         <div class="pull-left">
-                                            <a href="#" class="btn btn-default btn-flat">Perfil</a>
+                                            <a href="{{route('profile.index')}}" class="btn btn-default btn-flat">Perfil</a>
                                         </div>
                                         <div class="pull-right">
                                             <a href="{{route('login.logout')}}" class="btn btn-default btn-flat">Salir</a>

@@ -36,6 +36,10 @@
     </div>
     <!-- /.login-box-body -->
 </div>
+
+@endsection
+
+@section('script')
 <script src="{{ asset('js/tools.js') }}"></script>
 <script>
     let tools = new Tools();
@@ -148,9 +152,9 @@
                                 Los datos ingresados no coinciden con nuestra información interna, comuníquese con el área de sistemas para corroborar su n° dni o cip.
                                 <div class="box-footer">
                                     <ul class="nav nav-stacked">
-                                        <li><a href="#">Teléfono: <span class="pull-right badge bg-green text-white">064 562366</span></a></li>
-                                        <li><a href="#">Celular: <span class="pull-right badge bg-green text-white">+51 999999999</span></a></li>
-                                        <li><a href="#">Correo: <span class="pull-right badge bg-green text-white">ejemplo@hotmail.com</span></a></li>
+                                        <li><a href="#">Teléfono: <span class="pull-right badge bg-green text-white">(064) - 203033</span></a></li>
+                                        <li><a href="#">Celular: <span class="pull-right badge bg-green text-white">+51 935 845 791</span></a></li>
+                                        <li><a href="#">Correo: <span class="pull-right badge bg-green text-white">informatica@cip-junin.org.pe</span></a></li>
                                     </ul>
                                 </div>
                             </div>`);

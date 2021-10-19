@@ -189,7 +189,13 @@ function Tools() {
 
 
     this.ModalAlertSuccess = function (title, message, callback = function () { }) {
-        swal({ title: title, text: message, type: "success", showConfirmButton: true, allowOutsideClick: false }).then(() => {
+        swal({
+            title: title,
+            text: message,
+            type: "success",
+            showConfirmButton: true,
+            allowOutsideClick: false
+        }).then(() => {
             callback()
         });
     }

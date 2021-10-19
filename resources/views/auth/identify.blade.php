@@ -32,7 +32,9 @@
         </div>
     </div>
 </div>
+@endsection
 
+@section('script')
 <script src="{{ asset('js/tools.js') }}"></script>
 <script>
     let tools = new Tools();

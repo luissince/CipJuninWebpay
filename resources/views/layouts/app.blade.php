@@ -75,6 +75,7 @@
                             <li class="{{ Route::currentRouteNamed('index')?'active':'' }}"><a href="{{route('index')}}">Inicio</a></li>
                             <li class="{{ Route::currentRouteNamed('login.index')?'active':'' }}"><a href="{{route('login.index')}}">Iniciar Sesión</a></li>
                             <li class="{{ Route::currentRouteNamed('register.index') ?'active':'' }}"><a href="{{route('register.index')}}">Registrarse</a></li>
+                            <li class="{{ Route::currentRouteNamed('information.index') ?'active':'' }}"><a href="{{route('information.index')}}">Información</a></li>
                         </ul>
                     </div>
                 </div>
@@ -103,7 +104,7 @@
             <!-- /.container -->
         </footer>
     </div>
+    @yield('script')
 </body>
-
 
 </html>

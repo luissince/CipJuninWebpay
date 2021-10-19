@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title','CIP VIRTUAL - JUNÍN')
+@section('title', 'CIP VIRTUAL - JUNÍN')
 
 @section('content')
 
@@ -38,4 +38,18 @@
         </p>
     </div>
 </div>
+
+@endsection
+
+@section('script')
+<script src="{{ asset('js/tools.js') }}"></script>
+<script>
+    let tools = new Tools();
+
+    document.addEventListener('DOMContentLoaded', function() {
+
+
+    });
+</script>
+
 @endsection

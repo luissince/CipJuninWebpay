@@ -8,6 +8,7 @@ use App\Http\Controllers\IdentifyController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\VoucherController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\InformationController;
 
 Route::get('/', [AdminController::class, 'index'])->name('index');
 
@@ -18,6 +19,8 @@ Route::post('/login', [SessionController::class, 'valid'])->name('login.valid');
 Route::get('/register', [RegisterController::class, 'create'])->name('register.index');
 Route::post('/register/valid', [RegisterController::class, 'valid'])->name('register.valid');
 Route::post('/register/save', [RegisterController::class, 'save'])->name('register.save');
+
+Route::get('/information', [InformationController::class, 'index'])->name('information.index');
 
 Route::get('/identify', [IdentifyController::class, 'index'])->name('identify.index');
 Route::post('/identify/valid', [IdentifyController::class, 'valid'])->name('identify.valid');

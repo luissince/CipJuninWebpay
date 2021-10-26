@@ -280,9 +280,6 @@
                                 formaPago = "TARJETA";
                             }
 
-                            let observacionsunat =
-                                (ingresos.xmldescripcion === "" ? "Por Generar Xml y Enviar" : ingresos.xmldescripcion);
-
                             tbTable.append('<tr>' +
                                 '<td class="text-center text-primary">' + ingresos.id + '</td>' +
                                 '<td>' + btnPdf + '</td>' +

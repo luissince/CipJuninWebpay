@@ -99,7 +99,7 @@
                 <div class="pull-right hidden-xs">
                     <b>Version</b> 1.0.0
                 </div>
-                <strong>Copyright © 2021 <a href="http://www.cip-junin.org.pe">Colegio de Ingenieros del Perú - CD Junín </a>.</strong> Todos los derechos reservados.
+                <strong>Copyright © {{date('Y')}} <a href="http://www.cip-junin.org.pe">Colegio de Ingenieros del Perú - CD Junín </a>.</strong> Todos los derechos reservados.
             </div>
             <!-- /.container -->
         </footer>

@@ -155,7 +155,7 @@
     <div class="col-md-4 col-sm-4">
         <div style="padding-top: 1em; padding-left: 1em; padding-bottom: 1em;">
             <strong>Documento de pago <span class="badge bg-yellow">13</span>&nbsp;: </strong>
-            Dentrando al apartado se puede visualizar la lista de pagos que hiso el usuario.
+            Ingresando al apartado se puede visualizar la lista de pagos que hiso el usuario.
         </div>
         <div style="padding-top: 1em; padding-left: 1em; padding-bottom: 1em;">
             <strong>Certificado de habilidad <span class="badge bg-yellow">14</span>&nbsp;: </strong>
@@ -207,11 +207,11 @@
     <div class="col-md-4 col-sm-4">
         <div style="padding-top: 1em; padding-left: 1em; padding-bottom: 1em;">
             <strong>Cuota <span class="badge bg-yellow">19</span>&nbsp;: </strong>
-            Dentrando al apartado prodras hacer el pago de la cuota social de habilidad.
+            Ingresando al apartado prodras hacer el pago de la cuota social de habilidad.
         </div>
         <div style="padding-top: 1em; padding-left: 1em; padding-bottom: 1em;">
             <strong>Certificado <span class="badge bg-yellow">20</span>&nbsp;: </strong>
-            Dentrando al apartado prodras hacer el pago del certificado de habilidad.
+            Ingresando al apartado prodras hacer el pago del certificado de habilidad.
         </div>
         <div style="padding-top: 1em; padding-left: 1em; padding-bottom: 1em;">
             <strong>Agregar <span class="badge bg-yellow">21</span>&nbsp;: </strong>
@@ -223,7 +223,7 @@
         </div>
         <div style="padding-top: 1em; padding-left: 1em; padding-bottom: 1em;">
             <strong>Pagar <span class="badge bg-yellow">23</span>&nbsp;: </strong>
-            pulsando la opción podras realisar los pagos de las cuotas.
+            Pulsando la opción podras realisar los pagos de las cuotas.
         </div>
     </div>
 

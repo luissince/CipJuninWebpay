@@ -105,11 +105,10 @@ class ServiceController extends Controller
             ]);
 
             $cmdCuota = DB::selectOne("SELECT 
-            cast(ISNULL(ul.FechaUltimaCuota, c.FechaColegiado)as date) as UltimoPago     
-            from Persona as p inner join Colegiatura as c
-            on p.idDNI = c.idDNI and c.Principal = 1
-            left outer join ULTIMACuota as ul
-            on p.idDNI = ul.idDNI
+            cast(ISNULL(ul.FechaUltimaCuota, c.FechaColegiado) AS DATE) AS UltimoPago     
+            FROM Persona AS p 
+            INNER JOIN Colegiatura AS c ON p.idDNI = c.idDNI AND c.Principal = 1
+            LEFT OUTER JOIN ULTIMACuota AS ul ON p.idDNI = ul.idDNI
             WHERE p.idDNI = ?", [
                 $session->idDNI
             ]);

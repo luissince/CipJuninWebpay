@@ -12,10 +12,10 @@
         <label>Dirección:</label>
         Av. Centenario N° 604 (Costao de la iglesia pichicus) Junín - Huancayo - Huancayo
     </div>
-    <div class="col-md-4 col-sm-4">
+    <!-- <div class="col-md-4 col-sm-4">
         <label>Celular:</label>
         +51 935 845 791
-    </div>
+    </div> -->
     <div class="col-md-4 col-sm-4">
         <label>Correo:</label>
         informatica@cip-junin.org.pe

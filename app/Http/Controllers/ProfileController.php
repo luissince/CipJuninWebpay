@@ -6,7 +6,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Exception;
 use PDOException;
-use DateTime;
 
 class ProfileController extends Controller
 {
@@ -21,8 +20,9 @@ class ProfileController extends Controller
             p.NumDoc,
             p.Nombres,
             p.Apellidos,
-            p.CIP ,
+            p.CIP,
             p.FechaNac,
+            cast(p.FechaNac as date) as FechaNacimiento,
             p.Sexo,
             p.EstadoCivil,
             CASE p.Condicion WHEN 'V' THEN 'VITALICIO' WHEN 'R' THEN 'RETIRADO' WHEN 'F' THEN 'FALLECIDO' WHEN 'T' THEN 'TRANSEUNTE' ELSE 'ORDINARIO' END AS Condicion
@@ -104,6 +104,8 @@ class ProfileController extends Controller
                 DB::delete("DELETE FROM Web WHERE idDNI = ?", [$session->idDNI]);
 
                 DB::insert("INSERT INTO Web(idDNI,Tipo,Direccion)values(?,16,?)", [$session->idDNI, $request->email]);
+
+                DB::update("UPDATE Persona SET Nombres=?, Apellidos=?, NumDoc=?, Sexo=?, FechaNac=? WHERE idDNI=?", [$request->names, $request->lastName, $request->numDoc, $request->sexo, $request->fechaNac, $session->idDNI]);
 
                 DB::commit();
                 return response()->json([

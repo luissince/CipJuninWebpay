@@ -66,7 +66,15 @@ class IdentifyController extends Controller
                     return response()->json([
                         'status' => 0,
                         'message' =>  "Error de conexión, intente nuevamente en un parte de minutos.",
-                    ]);
+                        "error" => $ex->getMessage()
+                    ]); 
+                }catch(\Exception $ex){
+                    DB::rollBack();
+                    return response()->json([
+                        'status' => 0,
+                        'message' =>  "Error de conexión, intente nuevamente en un parte de minutos.",
+                        "error" => $ex->getMessage()
+                    ]); 
                 }
             }
         } else {

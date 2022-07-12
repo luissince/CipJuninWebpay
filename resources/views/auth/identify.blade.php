@@ -74,12 +74,12 @@
                     tools.ModalAlertInfo('Validando', 'Procesando petición...');
                     isProccess = true;
                     const data = new FormData(formValid);
-
+                    
                     let result = await tools.fetch_timeout("{{ route('identify.valid') }}", {
                         method: 'POST',
                         body: data
                     });
-
+                 
                     if (result.status === 1) {
                         tools.ModalAlertSuccess('Validando', result.message, function() {
                             $("#formPrimer").remove();

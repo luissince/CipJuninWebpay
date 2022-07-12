@@ -1084,7 +1084,9 @@
                                 method: 'POST',
                                 body: body
                             });
+                            
                             let result = await response.json();
+                            
                             if (result.status === 1) {
                                 tools.ModalAlertSuccess("Cobros", result.message);
                             } else {

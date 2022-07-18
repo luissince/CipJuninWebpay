@@ -153,6 +153,13 @@ function Tools() {
         }
     };
 
+    this.tableMessage = function (table, message) {
+        table.empty();
+        table.append(
+            '<div class="text-center" style="background-color: #e3e3e3; height: 400px; display:flex; justify-content: center; align-items: center;"><p>' + message + '</p></div>'
+        );
+    };
+
     this.ModalDialog = function (title, mensaje, callback) {
         swal({
             title: title,
@@ -301,7 +308,7 @@ function Tools() {
         toastr["info"](message, title)
     }
 
-    this.fetch_timeout = function (url, header = { method: "GET" }, timeout = 50000) {
+    this.fetch_timeout = async function (url, header = { method: "GET" }, timeout = 50000) {
 
         let primiseTime = new Promise(function (_, reject) {
             setTimeout(reject, timeout, { "state": 0, "message": "Tiempo de espera agotado, intente nuevamente en un par de minutos." })
@@ -309,7 +316,7 @@ function Tools() {
 
         let promiseFetch = new Promise(function (resolve, reject) {
             fetch(url, header).then(response => {
-        
+
                 if (response.ok) {
                     return response.text();
                 } else {

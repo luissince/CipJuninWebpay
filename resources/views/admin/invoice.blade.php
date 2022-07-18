@@ -57,10 +57,11 @@
                                     <tr>
                                         <th style="width:5%;" class="text-center">#</th>
                                         <th style="width:4%;">P.D.F</th>
+                                        <th style="width:4%;">XML</th>
                                         <th style="width:10%;">Fecha</th>
                                         <th style="width:12%;">Comprobante</th>
-                                        <th style="width:24%;">Colegiado</th>
-                                        <th style="width:15%;">Forma Pago</th>
+                                        <th style="width:23%;">Colegiado</th>
+                                        <th style="width:13%;">Forma Pago</th>
                                         <th style="width:9%;">Estado</th>
                                         <th style="width:9%;">Total</th>
                                     </tr>
@@ -226,6 +227,24 @@
             }
         }
 
+        this.downloadFile = async function (xml, serie, numeracion) {
+
+            let filename = `${serie} - ${numeracion}.xml`;
+            let text = atob(xml);
+
+            let element = document.createElement('a');
+            element.setAttribute('href', 'data:text/xml;charset=utf-8,' + encodeURIComponent(text));
+            element.setAttribute('download', filename);
+
+            element.style.display = 'none';
+            document.body.appendChild(element);
+
+            element.click();
+
+            document.body.removeChild(element);
+
+        }
+
         async function loadTableIngresos(opcion, buscar, fechaInicio, fechaFinal) {
             try {
                 tbTable.empty();
@@ -253,6 +272,7 @@
 
                 if (result.status == 1) {
                     arrayIngresos = result.data;
+
                     if (arrayIngresos.length == 0) {
                         tbTable.empty();
                         tbTable.append(
@@ -266,10 +286,17 @@
                     } else {
                         tbTable.empty();
                         for (let ingresos of arrayIngresos) {
+                            
+
+                            // var xmlDom = ingresos.Xmlgenerado === '' ? '' : ingresos.Xmlgenerado;
 
                             let btnPdf = '<a class="btn btn-danger btn-xs" href="https://www.intranet.cip-junin.org.pe/app/sunat/pdfingresos.php?idIngreso=' + ingresos.idIngreso + '" title="PDF" target="_blank">' +
                                 '<i class="fa fa-file-pdf-o" style="font-size:25px;"></i></br>' +
                                 '</a>';
+
+                            let xml = ingresos.Xmlgenerado === '' ? '' : btoa(ingresos.Xmlgenerado);
+
+                            let btnXML = xml === '' ? '' : '<button class="btn btn-info btn-xs" type="button" title="XML" onclick="downloadFile(\''+ xml + '\',\'' + ingresos.serie + '\',\'' + ingresos.numRecibo + '\')"><i class="fa fa-file-code-o" style="font-size:25px;"></i></br></button>';
 
                             let formaPago = "";
                             if (ingresos.tipo == 1) {
@@ -283,6 +310,7 @@
                             tbTable.append('<tr>' +
                                 '<td class="text-center text-primary">' + ingresos.id + '</td>' +
                                 '<td>' + btnPdf + '</td>' +
+                                '<td>' + btnXML + '</td>' +
                                 '<td>' + ingresos.fecha + '<br>' + tools.getTimeForma(ingresos.hora, true) + '</td>' +
                                 '<td>' + ingresos.comprobante + '<br>' + ingresos.serie + '-' + ingresos.numRecibo + '</td>' +
                                 '<td>' + ingresos.nombreDocumento + ' - ' + ingresos.numeroDocumento + '</br>' + ingresos.persona + '</td>' +

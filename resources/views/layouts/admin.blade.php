@@ -52,6 +52,7 @@
     <script src="{{asset('js/toastr.min.js')}}"></script>
     <script src="{{asset('js/payment.js')}}"></script>
     <script src="{{asset('js/tools.js') }}"></script>
+    <script src="{{asset('js/axios.js') }}"></script>
 </head>
 
 <body class="skin-blue layout-top-nav">
@@ -74,6 +75,7 @@
                             <li class="{{ Route::currentRouteNamed('index')?'active':'' }}"><a href="{{route('index')}}">Inicio</a></li>
                             <li class="{{ Route::currentRouteNamed('service.index')?'active':'' }}"><a href="{{route('service.index')}}">Servicios</a></li>
                             <li class="{{ Route::currentRouteNamed('voucher.index')?'active':'' }}"><a href="{{route('voucher.index')}}">Comprobantes</a></li>
+                            <li class="{{ Route::currentRouteNamed('jobs.index')?'active':'' }}"><a href="{{route('jobs.index')}}">Oferta Laboral</a></li>
                         </ul>
                     </div>
                     <div class="navbar-custom-menu">

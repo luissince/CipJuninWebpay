@@ -69,6 +69,7 @@ class VoucherController extends Controller
         }
     }
 
+
     public function invoiceall(Request $request)
     {
         try {
@@ -107,7 +108,8 @@ class VoucherController extends Controller
             ELSE 'DNI' END AS NombreDocumento,
             isnull(e.NumeroRuc,p.NumDoc) AS NumeroDocumento,
             isnull(e.Nombre,concat(p.Apellidos,' ', p.Nombres)) AS Persona,
-            sum(d.Monto) AS Total
+            sum(d.Monto) AS Total,
+            ISNULL(i.Xmlgenerado, '') as Xmlgenerado
             FROM Ingreso AS i 
             INNER JOIN TipoComprobante AS tc ON tc.IdTipoComprobante = i.TipoComprobante
             LEFT JOIN Persona AS p ON i.idDNI = p.idDNI
@@ -150,6 +152,7 @@ class VoucherController extends Controller
             e.Nombre,
             i.Xmlsunat,
             i.Xmldescripcion,
+            i.Xmlgenerado,
             e.IdEmpresa,
             tc.Nombre
             ORDER BY i.Fecha DESC,i.Hora DESC
@@ -189,6 +192,7 @@ class VoucherController extends Controller
                     "numeroDocumento" => $row->NumeroDocumento,
                     "persona" => $row->Persona,
                     "total" => $row->Total,
+                    "Xmlgenerado" => $row->Xmlgenerado
                 ));
             }
 

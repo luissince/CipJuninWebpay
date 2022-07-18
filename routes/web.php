@@ -9,6 +9,7 @@ use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\VoucherController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\InformationController;
+use App\Http\Controllers\JobsController;
 
 Route::get('/', [AdminController::class, 'index'])->name('index');
 
@@ -45,3 +46,7 @@ Route::post('/voucher/certhabilidadall', [VoucherController::class, 'certhabilid
 
 Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
 Route::post('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
+
+Route::get('/jobs', [JobsController::class, 'index'])->name('jobs.index');
+Route::post('/jobs/alljobs', [JobsController::class, 'alljobs'])->name('jobs.alljobs');
+Route::get('/jobs/dataid', [JobsController::class, 'dataid'])->name('jobs.dataid');

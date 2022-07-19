@@ -10,6 +10,7 @@ use App\Http\Controllers\VoucherController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\InformationController;
 use App\Http\Controllers\JobsController;
+use App\Http\Controllers\SearchController;
 
 Route::get('/', [AdminController::class, 'index'])->name('index');
 
@@ -50,3 +51,6 @@ Route::post('/profile/update', [ProfileController::class, 'update'])->name('prof
 Route::get('/jobs', [JobsController::class, 'index'])->name('jobs.index');
 Route::post('/jobs/alljobs', [JobsController::class, 'alljobs'])->name('jobs.alljobs');
 Route::get('/jobs/dataid', [JobsController::class, 'dataid'])->name('jobs.dataid');
+
+Route::get('/search', [SearchController::class, 'index'])->name('search.index');
+Route::get('/search/data', [SearchController::class, 'data'])->name('search.data');

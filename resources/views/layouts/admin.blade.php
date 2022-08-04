@@ -76,6 +76,7 @@
                             <li class="{{ Route::currentRouteNamed('service.index')?'active':'' }}"><a href="{{route('service.index')}}">Servicios</a></li>
                             <li class="{{ Route::currentRouteNamed('voucher.index')?'active':'' }}"><a href="{{route('voucher.index')}}">Comprobantes</a></li>
                             <li class="{{ Route::currentRouteNamed('jobs.index')?'active':'' }}"><a href="{{route('jobs.index')}}">Oferta Laboral</a></li>
+                            <li class="{{ Route::currentRouteNamed('course.index')?'active':'' }}"><a href="{{route('course.index')}}">Cursos</a></li>
                         </ul>
                     </div>
                     <div class="navbar-custom-menu">

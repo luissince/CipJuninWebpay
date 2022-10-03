@@ -537,7 +537,7 @@ class ServiceController extends Controller
                             }
 
                             foreach ($request->ingresos as $value) {
-                                DB::insert("INSERT INTO Detalle(
+                            DB::insert("INSERT INTO Detalle(
                             idIngreso,
                             idConcepto,
                             Cantidad,

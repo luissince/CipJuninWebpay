@@ -21,7 +21,7 @@ class SessionController extends Controller
     {
         try {
             $persona = DB::selectOne(
-                'SELECT  
+            'SELECT  
             p.idDNI,
             p.NumDoc,
             p.Nombres,

@@ -10,6 +10,8 @@ use App\Http\Controllers\VoucherController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\InformationController;
 use App\Http\Controllers\JobsController;
+use App\Http\Controllers\SearchController;
+use App\Http\Controllers\CourseController;
 
 Route::get('/', [AdminController::class, 'index'])->name('index');
 
@@ -50,3 +52,14 @@ Route::post('/profile/update', [ProfileController::class, 'update'])->name('prof
 Route::get('/jobs', [JobsController::class, 'index'])->name('jobs.index');
 Route::post('/jobs/alljobs', [JobsController::class, 'alljobs'])->name('jobs.alljobs');
 Route::get('/jobs/dataid', [JobsController::class, 'dataid'])->name('jobs.dataid');
+
+Route::get('/search', [SearchController::class, 'index'])->name('search.index');
+Route::get('/search/data', [SearchController::class, 'data'])->name('search.data');
+
+Route::get('/course', [CourseController::class, 'index'])->name('course.index');
+Route::post('/course/allcourses', [CourseController::class, 'allcourses'])->name('course.allcourses');
+Route::get('/course/dataid', [CourseController::class, 'dataid'])->name('course.dataid');
+Route::post('/course/addinscription', [CourseController::class, 'addinscription'])->name('course.addinscription');
+
+Route::get('/course/mycourses', [CourseController::class, 'mycourses'])->name('course.mycourses');
+Route::post('/course/allmycourses', [CourseController::class, 'allmycourses'])->name('course.allmycourses');

@@ -227,9 +227,9 @@
             }
         }
 
-        this.downloadFile = async function (xml, serie, numeracion) {
+        this.downloadFile = async function (xml, serie, numeracion, comprobante) {
 
-            let filename = `${serie} - ${numeracion}.xml`;
+            let filename = `${comprobante} ${serie} - ${numeracion} CIP-JUNIN.xml`;
             let text = atob(xml);
 
             let element = document.createElement('a');
@@ -296,7 +296,7 @@
 
                             let xml = ingresos.Xmlgenerado === '' ? '' : btoa(ingresos.Xmlgenerado);
 
-                            let btnXML = xml === '' ? '' : '<button class="btn btn-info btn-xs" type="button" title="XML" onclick="downloadFile(\''+ xml + '\',\'' + ingresos.serie + '\',\'' + ingresos.numRecibo + '\')"><i class="fa fa-file-code-o" style="font-size:25px;"></i></br></button>';
+                            let btnXML = xml === '' ? '' : '<button class="btn btn-success btn-xs" type="button" title="XML" onclick="downloadFile(\''+ xml + '\',\'' + ingresos.serie + '\',\'' + ingresos.numRecibo + '\',\'' + ingresos.comprobante + '\')"><i class="fa fa-file-code-o" style="font-size:25px;"></i></br></button>';
 
                             let formaPago = "";
                             if (ingresos.tipo == 1) {
